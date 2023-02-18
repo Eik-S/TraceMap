@@ -1,0 +1,31 @@
+{
+  "name": "tracemap",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --kill-others \"next dev\" \"npm run redis\"",
+    "build": "next build",
+    "start": "next start",
+    "tsc": "tsc",
+    "lint": "next lint",
+    "redis": "docker run -p 6379:6379 redis/redis-stack-server:latest"
+  },
+  "dependencies": {
+    "@next/font": "13.1.6",
+    "@types/node": "18.14.0",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "eslint": "8.34.0",
+    "eslint-config-next": "13.1.6",
+    "next": "13.1.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "redis": "^4.6.4",
+    "twitter-api-sdk": "^1.2.1",
+    "twitter-api-v2": "^1.14.1",
+    "typescript": "4.9.5"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
