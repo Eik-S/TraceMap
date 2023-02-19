@@ -1,2 +1,1 @@
-# tracemap
-Rewrite of the original tracemap project using React &amp; Next.js
+# [WIP] Reacreation of the Tracemap Tool using user-based twitter authentication

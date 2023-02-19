@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["esnext"],
+    "removeComments": true,
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "noImplicitAny": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "outDir": "./lib",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./lib/buildcache",
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules/**/*", ".vscode/**/*"]
+}
