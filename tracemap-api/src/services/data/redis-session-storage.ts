@@ -1,4 +1,4 @@
-import { SessionNotFoundError } from './../../errors'
+import { SessionExpiredError, SessionNotFoundError, SessionNotPendingError } from './../../errors'
 import { createClient } from 'redis'
 import { TwitterSession } from '../twitter-authentication'
 
@@ -10,9 +10,29 @@ export async function saveSession(sessionID: string, session: TwitterSession): P
   await redisClient.set(sessionID, JSON.stringify(session))
 }
 
-export async function getSession(sessionId: string): Promise<TwitterSession> {
+export async function getPendingSession(sessionID: string) {
+  const session = await getSession(sessionID)
+
+  if (session.state !== 'pending') {
+    throw new SessionNotPendingError()
+  }
+
+  return session
+}
+
+export async function getActiveSession(sessionID: string) {
+  const session = await getSession(sessionID)
+
+  if (session.state !== 'active') {
+    throw new SessionExpiredError()
+  }
+
+  return session
+}
+
+export async function getSession(sessionID: string): Promise<TwitterSession> {
   await connectRedisClient()
-  const sessionString = await redisClient.get(sessionId)
+  const sessionString = await redisClient.get(sessionID)
 
   if (typeof sessionString !== 'string') {
     throw new SessionNotFoundError()

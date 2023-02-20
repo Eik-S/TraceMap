@@ -1,23 +1,19 @@
-import {
-  InvalidStateIDError,
-  SessionAlreadyExistsError,
-  SessionExpiredError,
-  SessionNotPendingError,
-  TwitterAuthenticationError,
-} from './../errors'
 import { TwitterApi } from 'twitter-api-v2'
-import { getSession, hasSession, saveSession } from './data/redis-session-storage'
+import { InvalidStateIDError } from './../errors'
+import { getActiveSession, getPendingSession, saveSession } from './data/redis-session-storage'
+import { redirectUri, requestOauthLink, requestUserAccessToken } from './twitter-api'
 
 interface PendingSession {
   state: 'pending'
-  authURL: string
-  twitterStateId: string
+  stateID: string
   codeVerifier: string
+  redirectUri: string
 }
 
 interface ActiveSession {
   state: 'active'
   accessToken: string
+  refreshToken: string
   expiresIn: number
 }
 
@@ -27,94 +23,56 @@ interface RevokedSession {
 
 export type TwitterSession = PendingSession | ActiveSession | RevokedSession
 
-const redirectURL = 'http://localhost:3000/login/callback'
-
 export async function getAuthURL(sessionID: string): Promise<string> {
-  const client = new TwitterApi({
-    clientId: process.env.TWITTER_CLIENT_ID || '',
-    clientSecret: process.env.TWITTER_CLIENT_SECRET || '',
-  })
+  const { url, codeVerifier, state } = await requestOauthLink()
 
-  if (await hasSession(sessionID)) {
-    throw new SessionAlreadyExistsError()
-  }
-
-  const { url, codeVerifier, state } = client.generateOAuth2AuthLink(redirectURL, {
-    scope: ['tweet.read', 'users.read', 'follows.read', 'offline.access'],
-  })
-
-  const pendingSession: PendingSession = {
+  saveSession(sessionID, {
     state: 'pending',
-    authURL: url,
-    twitterStateId: state,
+    stateID: state,
     codeVerifier,
-  }
-  console.log(`saving codeVerifier: ${codeVerifier}`)
-  saveSession(sessionID, pendingSession)
+    redirectUri,
+  })
 
   return url
 }
 
 export async function createAccessToken(
   sessionID: string,
-  clientTwitterStateId: string,
+  clientStateID: string,
   code: string,
 ): Promise<void> {
-  const session = await getSession(sessionID)
+  const { stateID: dbStateID, codeVerifier, redirectUri } = await getPendingSession(sessionID)
+  checkStateIDs(clientStateID, dbStateID)
 
-  if (session.state !== 'pending') {
-    throw new SessionNotPendingError()
-  }
-
-  const { twitterStateId, codeVerifier } = session
-
-  if (twitterStateId !== clientTwitterStateId) {
-    throw new InvalidStateIDError()
-  }
-
-  const client = new TwitterApi({
-    clientId: process.env.TWITTER_CLIENT_ID || '',
-    clientSecret: process.env.TWITTER_CLIENT_SECRET || '',
+  const { accessToken, expiresIn, refreshToken, client } = await requestUserAccessToken({
+    code,
+    codeVerifier,
+    redirectUri,
   })
 
-  const {
-    accessToken,
-    expiresIn,
-    client: userClient,
-  } = await client
-    .loginWithOAuth2({
-      code,
-      codeVerifier,
-      redirectUri: redirectURL,
-    })
-    .catch(() => {
-      throw new TwitterAuthenticationError()
-    })
-
-  const activeSession: ActiveSession = {
+  await saveSession(sessionID, {
     state: 'active',
     accessToken,
+    refreshToken: refreshToken!,
     expiresIn,
-  }
+  })
 
-  await saveSession(sessionID, activeSession)
-
-  const { username } = (await userClient.currentUserV2()).data
+  const { username } = (await client.currentUserV2()).data
   console.log(`Created Session for user https://twitter.com/${username}`)
 }
 
 export async function login(sessionID: string): Promise<string> {
-  const session = await getSession(sessionID)
-
-  if (session.state !== 'active') {
-    throw new SessionExpiredError()
-  }
-
-  const { accessToken } = session
+  const { accessToken } = await getActiveSession(sessionID)
 
   const client = new TwitterApi(accessToken)
 
   const { username } = (await client.currentUserV2()).data
   console.log(`Recreated Session for user https://twitter.com/${username}`)
   return username
+}
+
+function checkStateIDs(stateID1: string, stateID2: string) {
+  if (stateID1 !== stateID2) {
+    throw new InvalidStateIDError()
+  }
 }
