@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTwitterLogin } from '../services/useTwitterLogin'
 import { darkPurple } from '../styles/colors'
 
@@ -20,10 +20,12 @@ type LoginState = LoggedOut | Loading | LoggedIn
 
 export function Header() {
   const { tryToRestorePreviousSession } = useTwitterLogin()
+  console.log('header rendered')
 
   const [loginState, setLoginState] = useState<LoginState>({ state: 'loading' })
 
-  window.onload = () => {
+  useEffect(() => {
+    console.log('checking session')
     tryToRestorePreviousSession()
       .then((username) => {
         setLoginState({
@@ -32,11 +34,13 @@ export function Header() {
         })
       })
       .catch(() => {
+        console.log('setting logged out')
         setLoginState({
           state: 'logged-out',
         })
       })
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div css={styles.wrapper}>

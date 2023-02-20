@@ -16,7 +16,7 @@ export function useTwitterLogin() {
     }
   }
 
-  async function tryToRestorePreviousSession(): Promise<string> {
+  async function tryToRestorePreviousSession() {
     const sessionID = localStorage.getItem('sessionID')
 
     if (typeof sessionID !== 'string') {
