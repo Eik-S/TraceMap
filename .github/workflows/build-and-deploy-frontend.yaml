@@ -6,10 +6,13 @@ on:
       - main
   pull_request:
 
+defaults:
+  run:
+    working-directory: ./tracemap-frontend
+
 jobs:
   build:
     name: building
-    working-directory: ./tracemap-frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
