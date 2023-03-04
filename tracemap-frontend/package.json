@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.9.3",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.11",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@emotion/babel-preset-css-prop": "^11.10.0",
+    "@types/twitter-for-web": "^0.0.2",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.2.1",
     "react-scripts": "^5.0.1"
