@@ -16,6 +16,10 @@ const globalStyles = css`
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
   }
+
+  * {
+    box-sizing: border-box;
+  }
 `
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)

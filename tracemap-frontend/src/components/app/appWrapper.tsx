@@ -1,3 +1,9 @@
+import { SidePanel } from './side-panel/sidePanel'
+
 export function AppWrapper() {
-  return <div>App loaded</div>
+  return (
+    <div>
+      <SidePanel />
+    </div>
+  )
 }
