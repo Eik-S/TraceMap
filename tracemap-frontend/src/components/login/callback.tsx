@@ -16,7 +16,7 @@ export function Callback() {
 
     activateSession({ sessionID, state, code })
       .then(() => {
-        window.location.href = '/'
+        window.location.href = '/app'
       })
       .catch((error) => {
         console.error(error)

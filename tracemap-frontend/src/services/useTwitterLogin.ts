@@ -25,7 +25,7 @@ export function useTwitterLogin() {
 
     const username = restoreSession(sessionID).catch((error) => {
       localStorage.removeItem('sessionID')
-      throw new ApiError()
+      throw new ApiError(error)
     })
 
     return username

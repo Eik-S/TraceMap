@@ -1,55 +1,18 @@
 import { css } from '@emotion/react'
-import { useEffect, useState } from 'react'
 import { useTwitterLogin } from '../services/useTwitterLogin'
 import { darkPurple } from '../styles/colors'
-
-type LoggedOut = {
-  state: 'logged-out'
-}
-
-type Loading = {
-  state: 'loading'
-}
-
-type LoggedIn = {
-  state: 'logged-in'
-  username: string
-}
-
-type LoginState = LoggedOut | Loading | LoggedIn
+import { useAuthenticationContext } from './login/authenticationContext'
 
 export function Header() {
-  const { tryToRestorePreviousSession } = useTwitterLogin()
-  console.log('header rendered')
-
-  const [loginState, setLoginState] = useState<LoginState>({ state: 'loading' })
-
-  useEffect(() => {
-    console.log('checking session')
-    tryToRestorePreviousSession()
-      .then((username) => {
-        setLoginState({
-          state: 'logged-in',
-          username,
-        })
-      })
-      .catch(() => {
-        console.log('setting logged out')
-        setLoginState({
-          state: 'logged-out',
-        })
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
     <div css={styles.wrapper}>
-      <LoginArea loginState={loginState} />
+      <LoginArea />
     </div>
   )
 }
 
-function LoginArea({ loginState }: { loginState: LoginState }) {
+function LoginArea() {
+  const { loginState } = useAuthenticationContext()
   const { loginWithTwitter } = useTwitterLogin()
 
   switch (loginState.state) {
