@@ -5,8 +5,8 @@
   "description": "Koa Server serving the api for tracemap",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently --kill-others \"ts-node ./src/index.ts\" \"npm run redis\"",
-    "redis": "docker run -p 6379:6379 redis/redis-stack-server:latest",
+    "start": "docker-compose up",
+    "start-koa": "ts-node ./src/index.ts",
     "tsc": "tsc"
   },
   "devDependencies": {

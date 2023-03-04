@@ -2,7 +2,9 @@ import { SessionExpiredError, SessionNotFoundError, SessionNotPendingError } fro
 import { createClient } from 'redis'
 import { TwitterSession } from '../twitter-authentication'
 
-const redisClient = createClient()
+const redisClient = createClient({
+  url: 'redis://redis:6379',
+})
 redisClient.on('error', (error) => console.log('Redis error: ', error))
 
 export async function saveSession(sessionID: string, session: TwitterSession): Promise<void> {
