@@ -20,7 +20,7 @@ interface Authentication {
   loginState: LoginState
 }
 
-function useAuthentication() {
+function useAuthentication(): Authentication {
   const { tryToRestorePreviousSession } = useTwitterLogin()
   const [loginState, setLoginState] = useState<LoginState>({ state: 'loading' })
 

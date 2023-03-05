@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useApi } from '../../services/useApi'
+import { useApi } from '../../services/useLoginApi'
 
 export function Callback() {
   const { activateSession } = useApi()

@@ -1,3 +1,5 @@
+import { baseUrl } from '../utils/config'
+
 interface ActivateSessionParams {
   state: string
   code: string
@@ -10,8 +12,6 @@ interface CreateSessionResponse {
 }
 
 export function useApi() {
-  const baseUrl = 'http://localhost:3030'
-
   async function createSession(): Promise<CreateSessionResponse> {
     const response = await fetch(`${baseUrl}/login/create-session`)
     return response.json()

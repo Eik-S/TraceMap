@@ -1,5 +1,5 @@
 import { TwitterApi } from 'twitter-api-v2'
-import { InvalidStateIDError } from './../errors'
+import { InvalidStateIDError, SessionExpiredError } from './../errors'
 import { getActiveSession, getPendingSession, saveSession } from './data/redis-session-storage'
 import { redirectUri, requestOauthLink, requestUserAccessToken } from './twitter-api'
 
@@ -62,13 +62,24 @@ export async function createAccessToken(
 }
 
 export async function login(sessionID: string): Promise<string> {
-  const { accessToken } = await getActiveSession(sessionID)
-
-  const client = new TwitterApi(accessToken)
+  const client = await getSessionClient(sessionID)
 
   const { username } = (await client.currentUserV2()).data
   console.log(`Recreated Session for user https://twitter.com/${username}`)
   return username
+}
+
+export async function getSessionClient(sessionID: string): Promise<TwitterApi> {
+  const { accessToken } = await getActiveSession(sessionID)
+
+  try {
+    return new TwitterApi(accessToken)
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message)
+    }
+    throw new SessionExpiredError()
+  }
 }
 
 function checkStateIDs(stateID1: string, stateID2: string) {

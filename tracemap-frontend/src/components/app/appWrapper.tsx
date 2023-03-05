@@ -2,13 +2,16 @@ import { css } from '@emotion/react'
 import { ThemeProvider } from '@mui/material'
 import { theme } from '../../styles/theme'
 import { SidePanel } from './side-panel/sidePanel'
+import { TwitterApiProvider } from './twitter-api/twitterApiContext'
 
 export function AppWrapper() {
   return (
     <ThemeProvider theme={theme}>
-      <div css={styles.wrapper}>
-        <SidePanel />
-      </div>
+      <TwitterApiProvider>
+        <div css={styles.wrapper}>
+          <SidePanel />
+        </div>
+      </TwitterApiProvider>
     </ThemeProvider>
   )
 }

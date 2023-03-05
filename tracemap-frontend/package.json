@@ -24,7 +24,8 @@
     "@types/twitter-for-web": "^0.0.2",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.2.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "twitter-api-v2": "^1.14.2"
   },
   "scripts": {
     "start": "BROWSER='none' react-app-rewired start",

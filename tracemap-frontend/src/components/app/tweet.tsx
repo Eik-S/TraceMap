@@ -25,6 +25,7 @@ export function Tweet({ id, cards = false, onLoaded = () => null, ...props }: Tw
           cards: cards ? 'visible' : 'hidden',
           linkColor: darkPurple,
           width: 308,
+          conversation: 'none',
         })
         .then(onLoaded)
         .catch((error) => {

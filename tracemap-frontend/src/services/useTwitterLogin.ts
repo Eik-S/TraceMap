@@ -1,5 +1,5 @@
 import { ApiError, NoSessionIDFoundError } from '../errors'
-import { useApi } from './useApi'
+import { useApi } from './useLoginApi'
 
 export function useTwitterLogin() {
   const { createSession, restoreSession } = useApi()

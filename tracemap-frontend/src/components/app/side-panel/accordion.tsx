@@ -36,7 +36,7 @@ export function Accordion({ title, children, contentState, ...props }: Accordion
           />
         )}
       </button>
-      <div css={styles.content(isOpen)}>{children}</div>
+      <div css={styles.content(isOpen && contentState === 'loaded')}>{children}</div>
     </div>
   )
 }
