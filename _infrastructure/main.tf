@@ -7,10 +7,22 @@ terraform {
   }
 
   required_version = ">= 1.2.0"
+
+  backend "s3" {
+
+    bucket         = "eike-terraform-state"
+    key            = "state/terraform.tfstate"
+    encrypt        = true
+    dynamodb_table = "eike-terraform_tf_lockid"
+  }
 }
 
 provider "aws" {
   region = "eu-central-1"
+}
+
+module "terraform_backend" {
+  source = "./terraform-backend"
 }
 
 module "website" {
@@ -20,5 +32,10 @@ module "website" {
 
 module "cdn" {
   source              = "./cdn"
+  website_domain_name = "tracemap.eikemu.com"
+}
+
+module "restriced_admin" {
+  source              = "./restricted-admin"
   website_domain_name = "tracemap.eikemu.com"
 }

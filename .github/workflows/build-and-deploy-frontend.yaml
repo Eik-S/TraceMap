@@ -26,17 +26,22 @@ jobs:
           path: ./tracemap-frontend/build
   deploy:
     needs: [build]
-    name: deploying to web-server
+    name: deploying to s3
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v3
         with:
           name: build-artifact
           path: ./tracemap-frontend/build
-      - uses: shimataro/ssh-key-action@v2
+      - uses: aws-actions/configure-aws-credentials@v2
         with:
-          key: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
-          known_hosts: 'just-a-placeholder'
-      - run: ssh-keyscan -H ${{ secrets.HETZNER_SERVER_IP }} >> ~/.ssh/known_hosts
-      - run: scp -r ./build/* ${{ secrets.HETZNER_SERVER_USER }}@${{ secrets.HETZNER_SERVER_IP }}:/var/www/tracemap
-    
+          role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
+          aws-region: eu-central-1
+      - name: upload build to s3
+        run: aws s3 sync ./build/ s3://tracemap.eikemu.com/ --delete
+      - name: invalidate cloudfront cache
+        run: aws cloudfront create-invalidation --distribution-id E3VLBU7WSF9N46 --paths '/*'
