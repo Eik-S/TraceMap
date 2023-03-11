@@ -50,9 +50,7 @@ resource "aws_iam_role_policy_attachment" "github_actions" {
 data "aws_iam_policy_document" "restricted_admin" {
   # Allow listing of terraform state folder
   statement {
-    actions = ["s3:ListBucket", "s3:GetBucketVersioning"]
-    effect  = "Allow"
-
+    actions   = ["s3:ListBucket", "s3:GetBucketVersioning"]
     resources = ["arn:aws:s3:::eike-terraform-state"]
   }
 
@@ -61,20 +59,6 @@ data "aws_iam_policy_document" "restricted_admin" {
     actions   = ["s3:GetObject", "s3:PutObject"]
     resources = ["arn:aws:s3:::eike-terraform-state/${aws_iam_role.restricted_admin.name}/*"]
   }
-
-  # # Allow this role access to the terraform KMS key used for s3 state encryption
-  # statement {
-  #   actions = [
-  #     "kms:Encrypt",
-  #     "kms:Decrypt",
-  #     "kms:ReEncrypt*",
-  #     "kms:GenerateDataKey*",
-  #     "kms:DescribeKey"
-  #   ]
-  #   effect = "Allow"
-
-  #   resources = [data.aws_kms_alias.terraform-state-encryption.target_key_arn]
-  # }
 
   # Allow describe table for terragrunt
   statement {

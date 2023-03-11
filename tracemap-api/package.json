@@ -5,11 +5,12 @@
   "description": "Koa Server serving the api for tracemap",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "docker-compose up",
-    "start-koa": "ts-node ./src/index.ts",
+    "start": "ts-node ./src/index.ts",
     "tsc": "tsc"
   },
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.289.0",
+    "@aws-sdk/lib-dynamodb": "^3.289.0",
     "@types/koa": "^2.13.5",
     "@types/koa__cors": "^3.3.1",
     "@types/koa__router": "^12.0.0",
@@ -23,7 +24,6 @@
     "@koa/router": "^12.0.0",
     "koa": "^2.14.1",
     "koa-bodyparser": "^4.3.0",
-    "redis": "^4.6.4",
     "ts-node": "^10.9.1",
     "twitter-api-v2": "^1.14.1"
   }

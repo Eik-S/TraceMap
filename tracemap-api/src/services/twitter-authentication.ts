@@ -1,6 +1,6 @@
 import { TwitterApi } from 'twitter-api-v2'
 import { InvalidStateIDError, SessionExpiredError } from './../errors'
-import { getActiveSession, getPendingSession, saveSession } from './data/redis-session-storage'
+import { getActiveSession, getPendingSession, saveSession } from './data/session-storage'
 import { redirectUri, requestOauthLink, requestUserAccessToken } from './twitter-api'
 
 interface PendingSession {

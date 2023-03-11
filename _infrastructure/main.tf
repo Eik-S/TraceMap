@@ -25,6 +25,11 @@ module "terraform_backend" {
   source = "./terraform-backend"
 }
 
+module "restriced_admin" {
+  source              = "./restricted-admin"
+  website_domain_name = "tracemap.eikemu.com"
+}
+
 module "website" {
   source      = "./static-website"
   domain_name = "tracemap.eikemu.com"
@@ -35,7 +40,6 @@ module "cdn" {
   website_domain_name = "tracemap.eikemu.com"
 }
 
-module "restriced_admin" {
-  source              = "./restricted-admin"
-  website_domain_name = "tracemap.eikemu.com"
+module "koa_server" {
+  source = "./koa-server"
 }
