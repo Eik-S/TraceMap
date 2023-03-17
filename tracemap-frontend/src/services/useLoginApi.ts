@@ -1,4 +1,4 @@
-import { baseUrl } from '../utils/config'
+import { apiUrl } from '../utils/config'
 
 interface ActivateSessionParams {
   state: string
@@ -13,12 +13,12 @@ interface CreateSessionResponse {
 
 export function useApi() {
   async function createSession(): Promise<CreateSessionResponse> {
-    const response = await fetch(`${baseUrl}/login/create-session`)
+    const response = await fetch(`${apiUrl}/login/create-session`)
     return response.json()
   }
 
   async function activateSession({ state, code, sessionID }: ActivateSessionParams): Promise<void> {
-    await fetch(`${baseUrl}/login/activate-session`, {
+    await fetch(`${apiUrl}/login/activate-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export function useApi() {
   }
 
   async function restoreSession(sessionID: string): Promise<string> {
-    const response = await fetch(`${baseUrl}/login/restore-session`, {
+    const response = await fetch(`${apiUrl}/login/restore-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

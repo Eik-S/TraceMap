@@ -1,17 +1,20 @@
 import { AccessOAuth2TokenArgs, TwitterApi } from 'twitter-api-v2'
+import { decrypt } from './data/secrets-manager'
 
 export const redirectUri = 'http://localhost:3000/login/callback'
 
-function createAppClient() {
+async function createAppClient() {
+  const clientId = await decrypt(process.env.twitter_client_id_encrypted!)
+  const clientSecret = await decrypt(process.env.twitter_client_secret_encrypted!)
   const client = new TwitterApi({
-    clientId: process.env.TWITTER_CLIENT_ID || '',
-    clientSecret: process.env.TWITTER_CLIENT_SECRET || '',
+    clientId,
+    clientSecret,
   })
   return client
 }
 
 export async function requestOauthLink() {
-  const client = createAppClient()
+  const client = await createAppClient()
 
   return client.generateOAuth2AuthLink(redirectUri, {
     scope: ['tweet.read', 'users.read', 'follows.read', 'offline.access'],
@@ -23,7 +26,7 @@ export async function requestUserAccessToken({
   codeVerifier,
   redirectUri,
 }: AccessOAuth2TokenArgs) {
-  const client = createAppClient()
+  const client = await createAppClient()
 
   return client.loginWithOAuth2({
     code,

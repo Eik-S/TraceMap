@@ -11,7 +11,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitThis": true,
     "sourceMap": true,
-    "target": "es2017",
+    "target": "es2020",
     "outDir": "./lib",
     "esModuleInterop": true,
     "resolveJsonModule": true,

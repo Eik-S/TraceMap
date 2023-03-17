@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 import { TweetV2 } from 'twitter-api-v2'
-import { baseUrl } from '../../../utils/config'
+import { apiUrl } from '../../../utils/config'
 
 interface TwitterApi {
   getTweetInfo: (tweetId: string) => Promise<TweetV2>
@@ -12,7 +12,7 @@ function useTwitterApi() {
   })
 
   async function getTweetInfo(tweetID: string): Promise<TweetV2> {
-    const response = await fetch(`${baseUrl}/twitter/tweet-info`, {
+    const response = await fetch(`${apiUrl}/twitter/tweet-info`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -86,6 +86,7 @@ data "aws_iam_policy_document" "restricted_admin" {
       # Sync built website to s3 bucket
       "s3:PutObject",
       "s3:GetObject",
+      "s3:DeleteObject",
       "s3:ListBucket"
     ]
     resources = [

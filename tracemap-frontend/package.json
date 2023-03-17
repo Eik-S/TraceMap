@@ -28,7 +28,7 @@
     "twitter-api-v2": "^1.14.2"
   },
   "scripts": {
-    "start": "BROWSER='none' react-app-rewired start",
+    "start": "NODDE_ENV=development BROWSER='none' react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "tsc": "tsc"

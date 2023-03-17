@@ -27,19 +27,23 @@ module "terraform_backend" {
 
 module "restriced_admin" {
   source              = "./restricted-admin"
-  website_domain_name = "tracemap.eikemu.com"
+  website_domain_name = var.website_domain_name
 }
 
 module "website" {
   source      = "./static-website"
-  domain_name = "tracemap.eikemu.com"
+  domain_name = var.website_domain_name
 }
 
 module "cdn" {
   source              = "./cdn"
-  website_domain_name = "tracemap.eikemu.com"
+  website_domain_name = var.website_domain_name
 }
 
 module "koa_server" {
-  source = "./koa-server"
+  source                          = "./koa-server"
+  tracemap_api_lambda_name        = var.tracemap_api_lambda_name
+  tracemap_api_lambda_role_name   = var.tracemap_api_lambda_role_name
+  twitter_client_id_encrypted     = "AQICAHhUKn/gQTRcnfwPG8wbF21rSKpf3rjiq7iBoynS7xr23QGCx9BxCsw+RF+Vc7BFaQ0LAAAAgDB+BgkqhkiG9w0BBwagcTBvAgEAMGoGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMSNPNQiJEDC/ttUB9AgEQgD3dWroZSC3gajQRLx4+mSjwFn9N+/BhAvRijFUoSy8vbws1ZS6D/of+nON8TGRjiSH2PHhIRRq/jOxxh73/"
+  twitter_client_secret_encrypted = "AQICAHhUKn/gQTRcnfwPG8wbF21rSKpf3rjiq7iBoynS7xr23QHE1oCsry22knZxVys1GnujAAAAkjCBjwYJKoZIhvcNAQcGoIGBMH8CAQAwegYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAwNKpBNIDV+f/5CVakCARCATUQE8Z3z0nVm9PJZHSbqf1GKaPB7Lq67TItnOtht65EdZkV2CXJ+Ri9cj6hlIxE/QkSOfIpr+QaHzZzmBF6UBAfT2mD6RctYXdQFdFFY"
 }

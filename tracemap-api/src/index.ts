@@ -7,7 +7,12 @@ import cors from '@koa/cors'
 import bodyParser from 'koa-bodyparser'
 import { restoreSessionController } from './controllers/restore-session-controller'
 import { tweetInfoController } from './controllers/twitter/tweet-info-controller'
-dotenv.config()
+import ServerlessHttp from 'serverless-http'
+import { isLocalDevelopment } from './utils/config'
+
+if (isLocalDevelopment) {
+  dotenv.config()
+}
 
 const PORT = 3030
 
@@ -25,4 +30,11 @@ server.use(bodyParser())
 server.use(router.routes())
 
 console.log(`\n\n>\t Koa Server running on http://localhost:${PORT}`)
-server.listen(PORT)
+
+// local dev server
+if (isLocalDevelopment) {
+  server.listen(PORT)
+}
+
+// lambda handler function
+export const handler = ServerlessHttp(server)

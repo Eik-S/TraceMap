@@ -1,6 +1,6 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    TWITTER_CLIENT_ID: string
-    TWITTER_CLIENT_SECRET: string
+    twitter_client_id_encrypted: string
+    twitter_client_secret_encrypted: string
   }
 }
