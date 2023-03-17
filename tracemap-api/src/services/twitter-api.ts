@@ -1,7 +1,8 @@
 import { AccessOAuth2TokenArgs, TwitterApi } from 'twitter-api-v2'
+import { frontendBaseUri } from '../utils/config'
 import { decrypt } from './data/secrets-manager'
 
-export const redirectUri = 'http://localhost:3000/login/callback'
+export const redirectUri = `${frontendBaseUri}/login/callback`
 
 async function createAppClient() {
   const clientId = await decrypt(process.env.twitter_client_id_encrypted!)
