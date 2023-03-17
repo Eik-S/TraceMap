@@ -8,6 +8,14 @@ resource "aws_cloudfront_distribution" "prod_distribution" {
     var.website_domain_name
   ]
 
+  # needed for react router to work
+  custom_error_response {
+    error_caching_min_ttl = 0
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/index.html"
+  }
+
   # Distributes content to US and Europe
   price_class = "PriceClass_100"
   restrictions {
