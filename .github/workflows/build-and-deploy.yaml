@@ -19,11 +19,12 @@ jobs:
         run: npm run tsc
       - name: building
         run: npm run build
-      - name: uploading build artifacts
+      - name: uploading frontend build artifact
         uses: actions/upload-artifact@v3
         with:
           name: frontend-build-artifact
           path: ./tracemap-frontend/build
+      - name: uploading api build artifact
         uses: actions/upload-artifact@v3
         with:
           name: api-build-artifact
@@ -37,8 +38,8 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - uses: actions/checkout@v3
       - name: downloading build artifact
-        uses: actions/checkout@v3
         uses: actions/download-artifact@v3
         with:
           name: frontend-build-artifact
@@ -61,8 +62,8 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - uses: actions/checkout@v3
       - name: downloading build artifact
-        uses: actions/checkout@v3
         uses: actions/download-artifact@v3
         with:
           name: api-build-artifact
