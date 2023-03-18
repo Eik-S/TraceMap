@@ -32,7 +32,8 @@
     "start": "NODDE_ENV=development BROWSER='none' react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "eslintConfig": {
     "extends": [

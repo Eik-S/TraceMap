@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Accordion } from './accordion'
 import { SearchBar } from './searchBar'
