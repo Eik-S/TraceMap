@@ -14,6 +14,7 @@
   "scripts": {
     "start": "aws-vault exec private -- concurrently --kill-others \"npm run start --workspace tracemap-frontend\" \"npm run start --workspace tracemap-api\"",
     "tsc": "npm run tsc --workspaces",
+    "build": "npm run build --workspaces",
     "lint": "npm run lint --workspaces --if-present",
     "prepare": "husky install"
   },
