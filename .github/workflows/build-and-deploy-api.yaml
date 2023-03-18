@@ -23,7 +23,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: lambda-zip
-          path: ./tracemap-api/dist/index.zip
+          path: ./tracemap-api/dist
   deploy:
     needs: [build]
     name: deploying lambda function
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: lambda-zip
-          path: ./tracemap-api/dist/index.zip
+          path: ./tracemap-api/dist
       - uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
