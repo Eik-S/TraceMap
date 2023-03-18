@@ -1,3 +1,4 @@
+import { SessionNotFoundError } from '../errors'
 import { apiUrl } from '../utils/config'
 
 interface ActivateSessionParams {
@@ -41,6 +42,10 @@ export function useApi() {
         sessionID,
       }),
     })
+
+    if (response.status === 401) {
+      throw new SessionNotFoundError()
+    }
 
     const { username } = await response.json()
     return username

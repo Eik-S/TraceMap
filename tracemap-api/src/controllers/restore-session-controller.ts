@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { SessionExpiredError } from '../errors'
+import { SessionExpiredError, SessionNotFoundError } from '../errors'
 import { login } from '../services/twitter-authentication'
 
 export type RestoreSessionRequest = {
@@ -29,7 +29,8 @@ export async function restoreSessionController(
   } catch (error) {
     switch ((error as Error).constructor) {
       case SessionExpiredError:
-        ctx.box = { message: 'Session expired' }
+      case SessionNotFoundError:
+        ctx.box = { message: 'Session expired or not found' }
         ctx.status = 401
         return
       default:

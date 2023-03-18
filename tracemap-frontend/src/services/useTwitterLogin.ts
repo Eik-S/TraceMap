@@ -1,4 +1,4 @@
-import { ApiError, NoSessionIDFoundError } from '../errors'
+import { ApiError, NoSessionIDFoundError, SessionNotFoundError } from '../errors'
 import { useApi } from './useLoginApi'
 
 export function useTwitterLogin() {
@@ -16,7 +16,7 @@ export function useTwitterLogin() {
     }
   }
 
-  async function tryToRestorePreviousSession() {
+  async function tryToRestorePreviousSession(): Promise<string> {
     const sessionID = localStorage.getItem('sessionID')
 
     if (typeof sessionID !== 'string') {
@@ -24,8 +24,14 @@ export function useTwitterLogin() {
     }
 
     const username = restoreSession(sessionID).catch((error) => {
-      localStorage.removeItem('sessionID')
-      throw new ApiError(error)
+      switch ((error as Error).constructor) {
+        case SessionNotFoundError:
+          console.log('removing sessionID')
+          localStorage.removeItem('sessionID')
+          throw new Error()
+        default:
+          throw new ApiError(error)
+      }
     })
 
     return username
