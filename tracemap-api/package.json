@@ -5,7 +5,7 @@
   "description": "Koa Server serving the api for tracemap",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_ENV=development aws-vault exec private -- ts-node ./src/index.ts",
+    "start": "NODE_ENV=development ts-node ./src/index.ts",
     "prebuild": "rm -rf dist",
     "build": "npx esbuild ./src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=./dist/index.js",
     "postbuild": "cd dist && zip -r index.zip index.js",

@@ -7,10 +7,30 @@ export function SearchBar({ ...props }) {
   const [searchTerm, setSearchTerm] = useState('')
 
   function search() {
-    if (searchTerm === '') {
+    const tweetID = parseTweetIDFromSearchTerm()
+
+    if (tweetID === undefined) {
       return
     }
-    console.log(searchTerm)
+
+    window.location.href = `/app/${tweetID}`
+  }
+
+  function handleKeyboardEvent(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      search()
+    }
+  }
+
+  function parseTweetIDFromSearchTerm() {
+    const matchResult = searchTerm.match(/[0-9]+$/)
+
+    if (matchResult === null) {
+      return undefined
+    }
+
+    const tweetID = matchResult[0]
+    return tweetID
   }
 
   return (
@@ -19,7 +39,7 @@ export function SearchBar({ ...props }) {
         css={styles.searchInput}
         type="text"
         onChange={(event) => setSearchTerm(event.target.value)}
-        onKeyDown={() => search()}
+        onKeyDown={(event) => handleKeyboardEvent(event)}
         placeholder="Enter Tweet URL"
       />
       <button css={styles.searchButton} onClick={() => search()}>
@@ -39,9 +59,9 @@ export function SearchBar({ ...props }) {
 const styles = {
   searchBar: css`
     position: relative;
+    height: 72px;
+    width: 100%;
     z-index: 3;
-    width: 360px;
-    height: 100%;
     background-color: ${colorGrayFontDark};
     align-items: center;
     display: grid;

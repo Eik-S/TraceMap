@@ -9,24 +9,23 @@ interface SourceTweetProps {
   onLoaded: () => void
 }
 export function SourceTweet({ onLoaded }: SourceTweetProps) {
-  const { tweetId } = useParams()
+  const { tweetID } = useParams()
   const { getTweetInfo } = useTwitterApiContext()
 
   const [retweetCount, setRetweetCount] = useState<number | undefined>(undefined)
 
   useEffect(() => {
-    if (tweetId) {
-      getTweetInfo(tweetId).then((response) => {
-        console.log('tweet info arrived')
+    if (tweetID) {
+      getTweetInfo(tweetID).then((response) => {
         setRetweetCount(response.public_metrics?.retweet_count)
       })
     }
-  }, [getTweetInfo, tweetId])
+  }, [getTweetInfo, tweetID])
 
-  if (tweetId) {
+  if (tweetID) {
     return (
       <div css={styles.wrapper}>
-        <Tweet css={styles.tweetContainer} id={tweetId} key="1" onLoaded={onLoaded} />
+        <Tweet css={styles.tweetContainer} id={tweetID} key="1" onLoaded={onLoaded} />
         <div css={styles.tweetInfo}>
           <img
             css={styles.retweetIcon}
@@ -37,7 +36,6 @@ export function SourceTweet({ onLoaded }: SourceTweetProps) {
               /icons/retweet_16.png 1x"
             src="/icons/retweet_16.png"
           />
-          {/* TODO: replace with real data */}
           <p css={styles.retweetCount}>{retweetCount}</p>
         </div>
       </div>

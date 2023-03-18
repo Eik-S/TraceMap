@@ -12,7 +12,15 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="login/callback" element={<Callback />} />
           <Route
-            path="app/:tweetId"
+            path="app/:tweetID"
+            element={
+              <ProtectedRoute>
+                <AppWrapper />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="app"
             element={
               <ProtectedRoute>
                 <AppWrapper />

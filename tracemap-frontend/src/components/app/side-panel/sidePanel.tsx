@@ -1,19 +1,24 @@
 import { css } from '@emotion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Accordion } from './accordion'
 import { SearchBar } from './searchBar'
 import { SourceTweet } from './sourceTweet'
 
 export function SidePanel() {
+  const { tweetID } = useParams()
+  const showAccordions = tweetID !== undefined
   // TODO: dont use state and handle directly in accordion
   const [sourceTweetState, setSourceTweetState] = useState<'loading' | 'loaded'>('loading')
 
   return (
     <div css={styles.wrapper}>
       <SearchBar css={styles.searchBar} />
-      <Accordion contentState={sourceTweetState} title="Source Tweet">
-        <SourceTweet onLoaded={() => setSourceTweetState('loaded')} />
-      </Accordion>
+      {showAccordions && (
+        <Accordion contentState={sourceTweetState} title="Source Tweet">
+          <SourceTweet onLoaded={() => setSourceTweetState('loaded')} />
+        </Accordion>
+      )}
     </div>
   )
 }
