@@ -60,10 +60,8 @@ data "aws_iam_policy_document" "restricted_admin" {
     resources = ["arn:aws:s3:::eike-terraform-state/${aws_iam_role.restricted_admin.name}/*"]
   }
 
-  # Allow describe table for terragrunt
   statement {
     actions = [
-      "dynamodb:DescribeTable",
       "dynamodb:DeleteItem",
       "dynamodb:GetItem",
       "dynamodb:PutItem"
@@ -105,6 +103,18 @@ data "aws_iam_policy_document" "restricted_admin" {
 
     resources = [
       "arn:aws:cloudfront::643625685022:distribution/E3VLBU7WSF9N46"
+    ]
+  }
+
+  statement {
+    sid = "ApiLambdaAccess"
+
+    actions = [
+      "lambda:UpdateFunctionCode"
+    ]
+
+    resources = [
+      "arn:aws:lambda:eu-central-1:643625685022:function:tracemap-api"
     ]
   }
 }

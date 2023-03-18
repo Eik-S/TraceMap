@@ -1,0 +1,45 @@
+name: Build and Deploy Api
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+defaults:
+  run:
+    working-directory: ./tracemap-api
+
+jobs:
+  build:
+    name: building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: volta-cli/action@v4
+      - run: npm i
+      - run: npm run tsc
+      - run: npm run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: lambda-zip
+          path: ./tracemap-api/dist/index.zip
+  deploy:
+    needs: [build]
+    name: deploying lambda function
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: lambda-zip
+          path: ./tracemap-api/dist/index.zip
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
+          aws-region: eu-central-1
+      - name: update function code
+        run: aws lambda update-function-code --function-name tracemap-api --zip-file fileb://dist/index.zip
