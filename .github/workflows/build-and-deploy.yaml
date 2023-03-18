@@ -11,9 +11,9 @@ jobs:
     name: building
     runs-on: ubuntu-latest
     steps:
+      - uses: volta-cli/action@v4
+      - uses: actions/checkout@v3
       - name: installing dependencies
-        uses: volta-cli/action@v4
-        uses: actions/checkout@v3
         run: npm i
       - name: type checking
         run: npm run tsc
@@ -43,11 +43,12 @@ jobs:
         with:
           name: frontend-build-artifact
           path: ./tracemap-frontend/build
-      - name: deploying to s3
+      - name: assuming role
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
           aws-region: eu-central-1
+      - name: deploying to s3
         run: aws s3 sync ./tracemap-frontend/build/ s3://tracemap.eikemu.com/ --delete
       - name: invalidating cloudfront cache
         run: aws cloudfront create-invalidation --distribution-id E3VLBU7WSF9N46 --paths '/*'
@@ -66,9 +67,10 @@ jobs:
         with:
           name: api-build-artifact
           path: ./tracemap-api/dist
-      - name: updating lambda function code
+      - name: assuming role
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
           aws-region: eu-central-1
+      - name: updating lambda function code
         run: aws lambda update-function-code --function-name tracemap-api --zip-file fileb://tracemap-api/dist/index.zip
