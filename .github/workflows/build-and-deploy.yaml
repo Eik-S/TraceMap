@@ -1,0 +1,69 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: volta-cli/action@v4
+      - run: npm i
+      - run: npm run tsc
+      - run: npm run build -w tracemap-frontend
+      - run: npm run build -w tracemap-api
+      - uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build-artifact
+          path: ./tracemap-frontend/build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: api-build-artifact
+          path: ./tracemap-api/dist
+
+  deploy-frontend:
+    needs: [build]
+    name: deploying frontend
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: frontend-build-artifact
+          path: ./tracemap-frontend/build
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
+          aws-region: eu-central-1
+      - name: upload build to s3
+        run: aws s3 sync ./tracemap-frontend/build/ s3://tracemap.eikemu.com/ --delete
+      - name: invalidate cloudfront cache
+        run: aws cloudfront create-invalidation --distribution-id E3VLBU7WSF9N46 --paths '/*'
+
+  deploy-api:
+    needs: [build]
+    name: deploying api
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: api-build-artifact
+          path: ./tracemap-api/dist
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::643625685022:role/terraformRestrictedAdmin
+          aws-region: eu-central-1
+      - name: update function code
+        run: aws lambda update-function-code --function-name tracemap-api --zip-file fileb://tracemap-api/dist/index.zip
