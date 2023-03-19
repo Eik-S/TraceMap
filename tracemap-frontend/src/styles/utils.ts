@@ -1,5 +1,7 @@
 import { css } from '@emotion/react'
 
+export const sideGap = '24px'
+
 export const resetInputStyles = css`
   background-color: transparent;
   border: none;

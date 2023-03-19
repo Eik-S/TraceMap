@@ -1,12 +1,16 @@
 import { css } from '@emotion/react'
 import { useTwitterLogin } from '../services/useTwitterLogin'
-import { darkPurple } from '../styles/colors'
+import { darkPurple, lightPurple } from '../styles/colors'
+import { sideGap } from '../styles/utils'
 import { useAuthenticationContext } from './login/authenticationContext'
 
 export function Header() {
   return (
-    <div css={styles.wrapper}>
-      <LoginArea />
+    <div>
+      <h1 css={styles.logoHeadline}>TraceMap</h1>
+      <div css={styles.loginWrapper}>
+        <LoginArea />
+      </div>
     </div>
   )
 }
@@ -30,13 +34,19 @@ function LoginArea() {
 }
 
 const styles = {
-  wrapper: css`
-    height: 150px;
-    padding: 0 60px;
-    margin: 0;
+  logoHeadline: css`
+    font-size: 28px;
+    font-weight: 600;
+    color: ${darkPurple};
+    letter-spacing: 3px;
+    padding-left: ${sideGap};
+  `,
+  loginWrapper: css`
+    height: 300px;
     background-color: ${darkPurple};
     display: flex;
     place-items: center;
+    justify-content: center;
   `,
   loginButton: css`
     border: 8px solid #fff;
@@ -45,13 +55,17 @@ const styles = {
     color: #fff;
     font-size: 32px;
     font-weight: 800;
-    text-align: center;
     cursor: pointer;
+    transition: background-color 0.4s ease-in-out;
+
+    &:hover {
+      background-image: radial-gradient(${lightPurple}, ${darkPurple});
+    }
   `,
   username: css`
     color: #fff;
     font-size: 32px;
-    font-weight: 800;
+    font-weight: bold;
   `,
   loadingText: css`
     color: #fff;
