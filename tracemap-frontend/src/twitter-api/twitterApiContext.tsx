@@ -1,9 +1,10 @@
 import { createContext, useContext } from 'react'
-import { TweetV2 } from 'twitter-api-v2'
-import { apiUrl } from '../../../utils/config'
+import { TweetV2, TweetV2LikedByResult } from 'twitter-api-v2'
+import { apiUrl } from '../utils/config'
 
 interface TwitterApi {
   getTweetInfo: (tweetId: string) => Promise<TweetV2>
+  getTweetRetweetedBy: (tweetId: string) => Promise<TweetV2LikedByResult>
 }
 
 function useTwitterApi() {
@@ -31,8 +32,29 @@ function useTwitterApi() {
     return response.json() as Promise<TweetV2>
   }
 
+  async function getTweetRetweetedBy(tweetID: string): Promise<TweetV2LikedByResult> {
+    const response = await fetch(`${apiUrl}/twitter/tweet-retweeted-by`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sessionID: await sessionID,
+        tweetID,
+      }),
+    })
+
+    if (!response.ok) {
+      console.log(response)
+      throw new Error('Failed to get retweeted by info')
+    }
+
+    return response.json() as Promise<TweetV2LikedByResult>
+  }
+
   return {
     getTweetInfo,
+    getTweetRetweetedBy,
   }
 }
 

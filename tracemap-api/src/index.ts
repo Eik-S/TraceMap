@@ -9,6 +9,7 @@ import { restoreSessionController } from './controllers/restore-session-controll
 import { tweetInfoController } from './controllers/twitter/tweet-info-controller'
 import ServerlessHttp from 'serverless-http'
 import { isLocalDevelopment } from './utils/config'
+import { tweetRetweetedByController } from './controllers/twitter/tweet-retweeted-by-controller'
 
 if (isLocalDevelopment) {
   dotenv.config()
@@ -24,6 +25,7 @@ router.post('/login/activate-session', activateSessionController)
 router.post('/login/restore-session', restoreSessionController)
 
 router.post('/twitter/tweet-info', tweetInfoController)
+router.post('/twitter/tweet-retweeted-by', tweetRetweetedByController)
 
 server.use(cors())
 server.use(bodyParser())

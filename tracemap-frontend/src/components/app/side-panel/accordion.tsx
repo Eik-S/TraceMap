@@ -1,16 +1,23 @@
+import { css } from '@emotion/react'
 import { CircularProgress } from '@mui/material'
 import { useState } from 'react'
-import { css } from '@emotion/react'
-import { resetButtonStyles } from '../../../styles/utils'
 import { colorGrayFontAccent } from '../../../styles/colors'
+import { resetButtonStyles } from '../../../styles/utils'
 
 interface AccordionProps {
   title: string
   children: React.ReactNode
   contentState: 'loading' | 'loaded'
+  renderOpen?: boolean
 }
-export function Accordion({ title, children, contentState, ...props }: AccordionProps) {
-  const [isOpen, setIsOpen] = useState(true)
+export function Accordion({
+  title,
+  children,
+  contentState,
+  renderOpen = true,
+  ...props
+}: AccordionProps) {
+  const [isOpen, setIsOpen] = useState(renderOpen)
 
   const toggle = () => {
     setIsOpen(!isOpen)
@@ -44,9 +51,11 @@ export function Accordion({ title, children, contentState, ...props }: Accordion
 const styles = {
   button: (isOpen: boolean) => css`
     ${resetButtonStyles}
+    position: sticky;
+    top: 0;
+    z-index: 3;
     width: 100%;
     height: 48px;
-    z-index: 3;
     padding-left: 20px;
     padding-right: 20px;
     background-color: #fff;
@@ -76,14 +85,14 @@ const styles = {
     width: 18px;
   `,
   content: (isOpen: boolean) => css`
-    background-color: transparent;
     overflow: hidden;
-    max-height: 0px;
+    position: relative;
+    height: 0px;
+    z-index: 2;
+
     ${isOpen &&
     css`
-      max-height: 10000px;
-      overflow-x: visible;
-      transition: max-height 0.5s;
+      height: auto;
     `}
   `,
 }

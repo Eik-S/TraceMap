@@ -1,25 +1,22 @@
 import { css } from '@emotion/react'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { colorParagraph } from '../../../styles/colors'
+import { useTwitterApiContext } from '../../../twitter-api/twitterApiContext'
 import { Tweet } from '../tweet'
-import { useTwitterApiContext } from '../twitter-api/twitterApiContext'
 
 interface SourceTweetProps {
+  tweetID: string
   onLoaded: () => void
 }
-export function SourceTweet({ onLoaded }: SourceTweetProps) {
-  const { tweetID } = useParams()
+export function SourceTweet({ tweetID, onLoaded }: SourceTweetProps) {
   const { getTweetInfo } = useTwitterApiContext()
 
   const [retweetCount, setRetweetCount] = useState<number | undefined>(undefined)
 
   useEffect(() => {
-    if (tweetID) {
-      getTweetInfo(tweetID).then((response) => {
-        setRetweetCount(response.public_metrics?.retweet_count)
-      })
-    }
+    getTweetInfo(tweetID).then((response) => {
+      setRetweetCount(response.public_metrics?.retweet_count)
+    })
   }, [getTweetInfo, tweetID])
 
   if (tweetID) {

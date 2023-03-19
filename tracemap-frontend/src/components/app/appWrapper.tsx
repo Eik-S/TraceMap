@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { ThemeProvider } from '@mui/material'
 import { theme } from '../../styles/theme'
 import { SidePanel } from './side-panel/sidePanel'
-import { TwitterApiProvider } from './twitter-api/twitterApiContext'
+import { TwitterApiProvider } from '../../twitter-api/twitterApiContext'
 
 export function AppWrapper() {
   return (
