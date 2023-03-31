@@ -1,28 +1,26 @@
 import { css } from '@emotion/react'
 import { useEffect, useState } from 'react'
 import { colorParagraph } from '../../../styles/colors'
-import { useTwitterApiContext } from '../../../twitter-api/twitterApiContext'
-import { Tweet } from '../tweet'
+import { useTweetInfoContext } from '../../../twitter-api/tweet-info-context'
+import { Tweet } from '../ui-elements/tweet'
 
 interface SourceTweetProps {
-  tweetID: string
   onLoaded: () => void
 }
-export function SourceTweet({ tweetID, onLoaded }: SourceTweetProps) {
-  const { getTweetInfo } = useTwitterApiContext()
-
-  const [retweetCount, setRetweetCount] = useState<number | undefined>(undefined)
+export function SourceTweet({ onLoaded }: SourceTweetProps) {
+  const { tweetID, retweetCount } = useTweetInfoContext()
+  const [tweetLoaded, setTweetLoaded] = useState(false)
 
   useEffect(() => {
-    getTweetInfo(tweetID).then((response) => {
-      setRetweetCount(response.public_metrics?.retweet_count)
-    })
-  }, [getTweetInfo, tweetID])
+    if (tweetLoaded && retweetCount) {
+      onLoaded()
+    }
+  }, [retweetCount, onLoaded, tweetLoaded])
 
-  if (tweetID) {
+  if (tweetID && retweetCount) {
     return (
       <div css={styles.wrapper}>
-        <Tweet css={styles.tweetContainer} id={tweetID} key="1" onLoaded={onLoaded} />
+        <Tweet css={styles.tweetContainer} id={tweetID} onLoaded={() => setTweetLoaded(true)} />
         <div css={styles.tweetInfo}>
           <img
             css={styles.retweetIcon}

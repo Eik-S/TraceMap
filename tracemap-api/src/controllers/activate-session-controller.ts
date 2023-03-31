@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { InvalidStateIDError, TwitterAuthenticationError } from '../errors'
+import { InvalidStateIDError, MissingParameterError } from '../utils/errors'
 import { createAccessToken } from '../services/twitter-authentication'
 
 export type ActivateSessionRequest = {
@@ -19,28 +19,10 @@ export async function activateSessionController(ctx: Context): Promise<void> {
     typeof code === 'undefined'
   ) {
     console.log(`required body keys are missing. ${JSON.stringify(ctx.request.body)}`)
-    ctx.status = 400
-    return
+    throw new MissingParameterError()
   }
 
-  try {
-    await createAccessToken(sessionID, state, code)
-    ctx.body = 'OK'
-    ctx.status = 200
-    return
-  } catch (error) {
-    switch ((error as Error).constructor) {
-      case InvalidStateIDError:
-        console.log(`stateIDs did not match for session ${sessionID}`)
-        ctx.status = 400
-        return
-      case TwitterAuthenticationError:
-        ctx.status = 500
-        return
-      default:
-        console.log(JSON.stringify(error, null, 2))
-        ctx.status = 500
-        return
-    }
-  }
+  await createAccessToken(sessionID, state, code)
+  ctx.body = 'OK'
+  ctx.status = 200
 }

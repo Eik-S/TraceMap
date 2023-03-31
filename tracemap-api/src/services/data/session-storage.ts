@@ -1,6 +1,10 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
-import { SessionExpiredError, SessionNotFoundError, SessionNotPendingError } from '../../errors'
+import {
+  SessionExpiredError,
+  SessionNotFoundError,
+  SessionNotPendingError,
+} from '../../utils/errors'
 import { TwitterSession } from '../twitter-authentication'
 
 const tableName = 'tracemap-sessions'

@@ -1,5 +1,5 @@
-import { TwitterApi } from 'twitter-api-v2'
-import { InvalidStateIDError, SessionExpiredError } from './../errors'
+import { ApiResponseError, TwitterApi } from 'twitter-api-v2'
+import { InvalidStateIDError, SessionExpiredError } from '../utils/errors'
 import { getActiveSession, getPendingSession, saveSession } from './data/session-storage'
 import { redirectUri, requestOauthLink, requestUserAccessToken } from './twitter-api'
 
@@ -44,7 +44,7 @@ export async function createAccessToken(
   const { stateID: dbStateID, codeVerifier, redirectUri } = await getPendingSession(sessionID)
   checkStateIDs(clientStateID, dbStateID)
 
-  const { accessToken, expiresIn, refreshToken, client } = await requestUserAccessToken({
+  const { accessToken, expiresIn, refreshToken } = await requestUserAccessToken({
     code,
     codeVerifier,
     redirectUri,
@@ -56,30 +56,24 @@ export async function createAccessToken(
     refreshToken: refreshToken!,
     expiresIn,
   })
-
-  const { username } = (await client.currentUserV2()).data
-  console.log(`Created Session for user https://twitter.com/${username}`)
 }
 
 export async function login(sessionID: string): Promise<string> {
-  const client = await getSessionClient(sessionID)
-
-  const { username } = (await client.currentUserV2()).data
-  console.log(`Recreated Session for user https://twitter.com/${username}`)
-  return username
+  try {
+    const client = await getSessionClient(sessionID)
+    const { username } = (await client.currentUserV2()).data
+    return username
+  } catch (error) {
+    if (error instanceof ApiResponseError && error.code === 401) {
+      throw new SessionExpiredError()
+    }
+    throw error
+  }
 }
 
 export async function getSessionClient(sessionID: string): Promise<TwitterApi> {
   const { accessToken } = await getActiveSession(sessionID)
-
-  try {
-    return new TwitterApi(accessToken)
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(error.message)
-    }
-    throw new SessionExpiredError()
-  }
+  return new TwitterApi(accessToken)
 }
 
 function checkStateIDs(stateID1: string, stateID2: string) {

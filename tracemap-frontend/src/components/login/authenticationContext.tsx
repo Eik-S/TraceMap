@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { createContext, useContext, useMemo } from 'react'
 import { useTwitterLogin } from '../../services/useTwitterLogin'
 
 type LoggedOut = {
@@ -22,30 +23,29 @@ interface Authentication {
 
 function useAuthentication(): Authentication {
   const { tryToRestorePreviousSession } = useTwitterLogin()
-  const [loginState, setLoginState] = useState<LoginState>({ state: 'loading' })
 
-  useEffect(() => {
-    if (window.location.href.includes('callback') || loginState.state !== 'loading') {
-      return
+  const {
+    data: username,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ['loginState'],
+    enabled: !window.location.href.includes('callback'),
+    queryFn: async () => {
+      const username = await tryToRestorePreviousSession()
+      return username
+    },
+  })
+
+  const loginState: LoginState = useMemo(() => {
+    if (isLoading) {
+      return { state: 'loading' }
     }
-
-    console.log('checking for previous session')
-    tryToRestorePreviousSession()
-      .then((username) => {
-        setLoginState({
-          state: 'logged-in',
-          username,
-        })
-      })
-      .catch(() => {
-        console.log('setting logged out')
-        setLoginState({
-          state: 'logged-out',
-        })
-      })
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loginState.state])
+    if (error) {
+      return { state: 'logged-out' }
+    }
+    return { state: 'logged-in', username: username! }
+  }, [error, isLoading, username])
 
   return {
     loginState,

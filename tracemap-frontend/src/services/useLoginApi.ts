@@ -43,12 +43,21 @@ export function useApi() {
       }),
     })
 
-    if (response.status === 401) {
-      throw new SessionNotFoundError()
+    if (response.ok) {
+      const { username } = await response.json()
+      return username
     }
 
-    const { username } = await response.json()
-    return username
+    handleRestoreSessionError(response)
+
+    console.log(response)
+    throw Error(`error while restoring session: ${response.statusText}`)
+  }
+
+  function handleRestoreSessionError(response: Response) {
+    if (response.status === 401 && response.statusText === 'Unauthorized') {
+      throw new SessionNotFoundError()
+    }
   }
 
   return {

@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
 import { useEffect, useRef } from 'react'
-import { darkPurple } from '../../styles/colors'
 
 interface TweetProps {
   id: string
@@ -13,33 +12,31 @@ export function Tweet({ id, cards = false, onLoaded = () => null, ...props }: Tw
 
   useEffect(() => {
     const tweetContainer = tweetContainerRef.current
-    if (tweetContainer === null || tweetContainer.childNodes.length > 0) {
+    if (!tweetContainer || tweetContainer.childNodes.length > 0) {
       return
     }
+
     window.twttr.ready((twttr) => {
-      if (tweetContainer.firstChild) {
-        tweetContainer.removeChild(tweetContainer.firstChild)
-      }
       twttr.widgets
         .createTweet(id, tweetContainer, {
           cards: cards ? 'visible' : 'hidden',
-          linkColor: darkPurple,
           width: 308,
           conversation: 'none',
         })
-        .then(onLoaded)
+        .then(() => {
+          tweetContainer.replaceChildren(tweetContainer.firstChild as Node)
+          onLoaded()
+        })
         .catch((error) => {
           console.error(error)
         })
     })
 
     return () => {
-      const firstChildOfTweetContainer = tweetContainer?.firstChild
-      if (firstChildOfTweetContainer) {
-        tweetContainer.removeChild(firstChildOfTweetContainer)
-      }
+      tweetContainer.innerHTML = ''
     }
-  }, [cards, id, onLoaded])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tweetContainerRef.current])
 
   return <div css={styles.tweetContainer} {...props} ref={tweetContainerRef} />
 }

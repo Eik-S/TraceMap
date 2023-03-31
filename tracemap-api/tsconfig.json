@@ -7,7 +7,7 @@
     "module": "CommonJS",
     "noImplicitAny": true,
     "noUnusedParameters": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitThis": true,
     "sourceMap": true,

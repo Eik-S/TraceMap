@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { SessionExpiredError, SessionNotFoundError } from '../errors'
+import { MissingParameterError, SessionExpiredError, SessionNotFoundError } from '../utils/errors'
 import { login } from '../services/twitter-authentication'
 
 export type RestoreSessionRequest = {
@@ -16,28 +16,11 @@ export async function restoreSessionController(
   const { sessionID } = ctx.request.body as Partial<RestoreSessionRequest>
 
   if (typeof sessionID === 'undefined') {
-    console.log(`required sessionID key are missing.`)
-    ctx.status = 400
-    return
+    console.log(`required sessionID key missing.`)
+    throw new MissingParameterError()
   }
 
-  try {
-    const username = await login(sessionID)
-    ctx.body = { username }
-    ctx.status = 200
-    return
-  } catch (error) {
-    switch ((error as Error).constructor) {
-      case SessionExpiredError:
-      case SessionNotFoundError:
-        ctx.box = { message: 'Session expired or not found' }
-        ctx.status = 401
-        return
-      default:
-        console.log((error as Error).constructor)
-        console.log(JSON.stringify(error, null, 2))
-        ctx.status = 500
-        return
-    }
-  }
+  const username = await login(sessionID)
+  ctx.body = { username }
+  ctx.status = 200
 }
