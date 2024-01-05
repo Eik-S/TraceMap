@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "tracemap_api" {
       "dynamodb:Query",
       "dynamodb:PutItem",
     ]
-    resources = [aws_dynamodb_table.tracemap_sessions.arn]
+    resources = [aws_dynamodb_table.tracemap_sessions.arn, aws_dynamodb_table.mastodon_apps.arn]
   }
 }
 
