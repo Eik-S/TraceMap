@@ -1,45 +1,79 @@
 import { css } from '@emotion/react'
-import { useTwitterLogin } from '../services/useTwitterLogin'
-import { darkPurple, lightPurple } from '../styles/colors'
+import { AccountData } from '../services/useTracemapMastoApi'
+import { iconButton, mainButton } from '../styles/buttons'
+import { darkPurple } from '../styles/colors'
 import { sideGap } from '../styles/utils'
-import { useAuthenticationContext } from './login/authenticationContext'
+import { useAuthenticationContext } from '../contexts/authentication-context'
 
-export function Header() {
+export function Header({ ...props }) {
+  const { loginState } = useAuthenticationContext()
+
   return (
-    <div>
-      <h1 css={styles.logoHeadline}>TraceMap</h1>
-      <div css={styles.loginWrapper}>
-        <LoginArea />
+    <div {...props}>
+      <div css={styles.logoHeadline}>
+        <h1 css={styles.logo}>TraceMap</h1>
+        {loginState.state === 'logged-in' && <AccountCard {...loginState.userData} />}
       </div>
     </div>
   )
 }
 
-function LoginArea() {
-  const { loginState } = useAuthenticationContext()
-  const { loginWithTwitter } = useTwitterLogin()
+function logout() {
+  localStorage.removeItem('access-token')
+  document.location.href = '/'
+}
 
-  switch (loginState.state) {
-    case 'logged-out':
-      return (
-        <button css={styles.loginButton} onClick={() => loginWithTwitter()}>
-          Twitter Login
-        </button>
-      )
-    case 'logged-in':
-      return <p css={styles.username}>Hello @{loginState.username}</p>
-    default:
-      return <p css={styles.loadingText}>loading</p>
-  }
+function AccountCard({ username, avatar, url }: AccountData) {
+  return (
+    <div css={styles.accountCard}>
+      <a href={url} target="_blank" rel="noreferrer" css={styles.username}>
+        {username}
+      </a>
+      <button css={styles.logoutButton} onClick={() => logout()}>
+        <img alt="" src="/icons/logout-icon_64.png" />
+        logout
+      </button>
+      <img css={styles.avatarImage} src={avatar} alt="" />
+    </div>
+  )
 }
 
 const styles = {
   logoHeadline: css`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  `,
+  logo: css`
     font-size: 28px;
     font-weight: 600;
     color: ${darkPurple};
     letter-spacing: 3px;
     padding-left: ${sideGap};
+  `,
+  accountCard: css`
+    height: 60px;
+    padding-right: ${sideGap};
+
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    grid-column-gap: 12px;
+    align-items: baseline;
+    justify-items: right;
+  `,
+  username: css`
+    color: ${darkPurple};
+    font-size: 22px;
+    font-weight: bold;
+  `,
+  logoutButton: css`
+    ${iconButton}
+  `,
+  avatarImage: css`
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    height: 60px;
   `,
   loginWrapper: css`
     height: 300px;
@@ -49,46 +83,11 @@ const styles = {
     justify-content: center;
   `,
   loginButton: css`
-    border: 8px solid #fff;
-    background-color: ${darkPurple};
-    padding: 15px 30px;
-    color: #fff;
-    font-size: 32px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: background-color 0.4s ease-in-out;
-
-    &:hover {
-      background-image: radial-gradient(${lightPurple}, ${darkPurple});
-    }
+    ${mainButton}
   `,
-  username: css`
-    color: #fff;
-    font-size: 32px;
-    font-weight: bold;
-  `,
-  loadingText: css`
-    color: #fff;
-    font-size: 32px;
-    font-weight: 800;
-    &:after {
-      content: '';
-      animation: 1s infinite alternate dots;
-    }
-
-    @keyframes dots {
-      0% {
-        content: '';
-      }
-      33% {
-        content: '.';
-      }
-      66% {
-        content: '..';
-      }
-      100% {
-        content: '...';
-      }
-    }
+  mainNavigation: css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 }

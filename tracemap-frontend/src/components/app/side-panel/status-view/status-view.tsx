@@ -1,30 +1,30 @@
-import { css } from '@emotion/react'
+import { css } from '@mui/material'
 import { useState } from 'react'
-import { colorGrayBg } from '../../../styles/colors'
-import { useTweetInfoContext } from '../../../twitter-api/tweet-info-context'
-import { Accordion } from './accordion'
+import { colorGrayBg } from '../../../../styles/colors'
+import { Accordion } from '../accordion'
 import { Retweeters } from './retweeters'
-import { SearchBar } from './searchBar'
-import { SourceTweet } from './sourceTweet'
+import { useStatusInfoContext } from '../../../../contexts/status-info-context'
+import { SourceStatus } from '../source-status'
+import { SearchBar } from '../search-bar'
 
 type LoadingState = 'loading' | 'loaded'
 
-export function SidePanel() {
-  const { tweetID } = useTweetInfoContext()
-  const showAccordions = tweetID !== undefined
+export function StatusView() {
+  const { statusInfo } = useStatusInfoContext()
+  const statusID = statusInfo?.id
+  const showAccordions = statusID !== undefined
 
-  const [sourceTweetState, setSourceTweetState] = useState<LoadingState>('loading')
+  const [sourceStatusState, setSourceStatusState] = useState<LoadingState>('loading')
   const [retweeterInfoState, setRetweeterInfoState] = useState<LoadingState>('loading')
-
   return (
     <div css={styles.wrapper}>
-      <SearchBar css={styles.searchBar} />
+      <SearchBar />
       {showAccordions && (
         <div>
-          <Accordion contentState={sourceTweetState} title="Source Tweet" renderOpen={false}>
-            <SourceTweet onLoaded={() => setSourceTweetState('loaded')} />
+          <Accordion contentState={sourceStatusState} title="Source Status" renderOpen={true}>
+            <SourceStatus onLoaded={() => setSourceStatusState('loaded')} />
           </Accordion>
-          <Accordion contentState={retweeterInfoState} title="Retweeters">
+          <Accordion contentState={retweeterInfoState} title="Shared by">
             <Retweeters onLoaded={() => setRetweeterInfoState('loaded')} />
           </Accordion>
         </div>

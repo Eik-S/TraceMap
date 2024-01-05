@@ -7,13 +7,13 @@ export function SearchBar({ ...props }) {
   const [searchTerm, setSearchTerm] = useState('')
 
   function search() {
-    const tweetID = parseTweetIDFromSearchTerm()
+    const status = parseStatusIDAndServerFromSearchTerm()
 
-    if (tweetID === undefined) {
+    if (status === undefined) {
       return
     }
 
-    window.location.href = `/app/${tweetID}`
+    window.location.href = `/app/${status}`
   }
 
   function handleKeyboardEvent(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -22,15 +22,18 @@ export function SearchBar({ ...props }) {
     }
   }
 
-  function parseTweetIDFromSearchTerm() {
-    const matchResult = searchTerm.match(/[0-9]+$/)
+  function parseStatusIDAndServerFromSearchTerm() {
+    // https://mastodon.social/@janboehm@edi.social/111697742855340300
+    // becomes 111697742855340300@edi.social
+    const statusServer = new URL(searchTerm).hostname
 
+    const matchResult = searchTerm.match(/[0-9]+$/)
     if (matchResult === null) {
       return undefined
     }
+    const statusID = matchResult[0]
 
-    const tweetID = matchResult[0]
-    return tweetID
+    return `${statusID}@${statusServer}`
   }
 
   return (

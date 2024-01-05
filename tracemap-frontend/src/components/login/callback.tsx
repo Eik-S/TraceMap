@@ -1,27 +1,28 @@
 import { useEffect } from 'react'
-import { useApi } from '../../services/useLoginApi'
+import { useLocalStorage } from '../../utils/use-local-storage'
+import { useTracemapLoginApi } from '../../services/useTracemapLoginApi'
 
 export function Callback() {
-  const { activateSession } = useApi()
+  const [server] = useLocalStorage('server', '')
+  const { getAccessToken } = useTracemapLoginApi()
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search)
-    const state = urlSearchParams.get('state')
-    const code = urlSearchParams.get('code')
-    const sessionID = localStorage.getItem('sessionID')
+    const authorizationCode = urlSearchParams.get('code')
 
-    if (!sessionID || !state || !code) {
+    if (authorizationCode === null || server === '') {
       return
     }
 
-    activateSession({ sessionID, state, code })
-      .then(() => {
+    getAccessToken(server, authorizationCode)
+      .then(({ accessToken }) => {
+        localStorage.setItem('access-token', accessToken)
         window.location.href = '/app'
       })
       .catch((error) => {
         console.error(error)
       })
-  }, [activateSession])
+  }, [getAccessToken, server])
 
   return (
     <div>

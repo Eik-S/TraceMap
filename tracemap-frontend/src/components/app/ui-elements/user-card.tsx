@@ -1,37 +1,31 @@
 import { css } from '@emotion/react'
 import { useState } from 'react'
-import { UserV2 } from 'twitter-api-v2'
+import { Link, useParams } from 'react-router-dom'
 import { colorGrayFontBlackish, colorParagraph, darkPurple } from '../../../styles/colors'
 import { userCardBoxShadow, userDetailsButtonBoxShadow } from '../../../styles/shadows'
-import { resetButtonStyles } from '../../../styles/utils'
+import { AccountData } from '../../../services/useTracemapMastoApi'
 
 interface UserCardProps {
-  user: UserV2
+  user: AccountData
 }
 
 export function UserCard({ user, ...props }: UserCardProps) {
   const [isHovered, setIsHovered] = useState(false)
-
-  function openUserDetails() {
-    console.log(`Open user details page for user ${user.id} (${user.name}}`)
-    // TODO: Write user details page
-  }
+  const { userID } = useParams()
 
   return (
     <div
       css={styles.userCard}
-      onClick={() => openUserDetails()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       {...props}
     >
-      <User
-        css={styles.user}
-        name={user.name}
-        screenName={user.username}
-        profileImageUrl={user.profile_image_url}
-      />
-      <button css={styles.button(isHovered)}>
+      <User css={styles.user} {...user} />
+      <Link
+        css={styles.linkButton(isHovered)}
+        to={userID ? `../${user.acct}` : `${user.acct}`}
+        relative="path"
+      >
         {isHovered ? (
           <img
             alt=""
@@ -53,30 +47,24 @@ export function UserCard({ user, ...props }: UserCardProps) {
             src="/icons/arrow-right_32.png"
           />
         )}
-      </button>
+      </Link>
     </div>
   )
 }
 
-interface UserProps {
-  name: string
-  screenName: string
-  profileImageUrl?: string
-}
-
-export function User({ name, screenName, profileImageUrl, ...props }: UserProps) {
+export function User({ username, acct, avatar, url, ...props }: AccountData) {
   return (
     <div css={styles.wrapper} {...props}>
-      <img css={styles.image} alt="" src={profileImageUrl || ''} />
+      <img css={styles.image} alt="" src={avatar} />
       <a
         css={styles.twitterLink}
-        href={`https://twitter.com/${screenName}`}
+        href={url}
         target="_blank"
         rel="noreferrer"
-        title="view on Twitter"
+        title="view on Mastodon"
       >
-        <h3 css={styles.name}>{name}</h3>
-        <p css={styles.screenName}>@{screenName}</p>
+        <h3 css={styles.name}>{username}</h3>
+        <p css={styles.screenName}>@{acct}</p>
       </a>
     </div>
   )
@@ -88,6 +76,7 @@ const styles = {
     width: 320px;
     background-color: #fff;
     border-radius: 6px;
+    text-decoration: none;
     display: flex;
     ${userCardBoxShadow}
   `,
@@ -97,12 +86,14 @@ const styles = {
     width: 272px;
     overflow: hidden;
   `,
-  button: (highlighted: boolean) => css`
-    ${resetButtonStyles}
+  linkButton: (highlighted: boolean) => css`
     width: 48px;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
     transition: background-color 0.2s linear;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     img {
       width: 12px;

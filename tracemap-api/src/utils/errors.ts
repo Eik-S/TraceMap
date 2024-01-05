@@ -5,51 +5,50 @@ export class RequestError {
   message = 'internal server error'
 }
 
-export class MissingParameterError implements RequestError {
+export class MissingParameterError extends RequestError {
   statusCode = 400
   message = 'required parameter missing'
 }
 
-export class SessionNotFoundError implements RequestError {
+export class SessionNotFoundError extends RequestError {
   statusCode = 401
   message = 'session not found'
 }
 
-export class SessionExpiredError implements RequestError {
+export class SessionExpiredError extends RequestError {
   statusCode = 401
   message = 'session expired'
 }
-export class SessionNotPendingError implements RequestError {
+export class SessionNotPendingError extends RequestError {
   statusCode = 400
   message = 'session not pending'
 }
 
-export class InvalidStateIDError implements RequestError {
+export class InvalidStateIDError extends RequestError {
   statusCode = 403
   message = 'stateID provided does not match'
 }
 
-export class TwitterNotAuthorizedError implements RequestError {
+export class TwitterNotAuthorizedError extends RequestError {
   statusCode = 500
   message = 'Twitter Error: client not authorized'
 }
 
-export class TwitterApiLimitReachedError implements RequestError {
+export class TwitterApiLimitReachedError extends RequestError {
   statusCode = 500
   message = 'Twitter Error: api limit reached'
+}
+
+export class MastoRecordNotFoundError extends RequestError {
+  statusCode = 404
+  message = 'Mastodon Error: Record not Found'
 }
 
 export async function errorResponseMiddleware(ctx: Context, next: Next) {
   try {
     await next()
-  } catch (err) {
-    if (err instanceof RequestError) {
-      ctx.status = err.statusCode
-      ctx.body = {
-        message: err.message,
-      }
-    }
-
-    throw err
+  } catch (error: any) {
+    ctx.status = error.statusCode || 500
+    ctx.body = { message: error.message || 'internal server error' }
   }
 }

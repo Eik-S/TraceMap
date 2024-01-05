@@ -45,9 +45,14 @@ resource "aws_iam_policy" "tracemap_api" {
   policy = data.aws_iam_policy_document.tracemap_api.json
 }
 
-resource "aws_iam_role_policy_attachment" "social_bot" {
+resource "aws_iam_role_policy_attachment" "tracemap_api" {
   role       = aws_iam_role.tracemap_api.name
   policy_arn = aws_iam_policy.tracemap_api.arn
+}
+
+resource "aws_iam_role_policy_attachment" "tracemap_api_aws_lambda_basic_execution" {
+  role       = aws_iam_role.tracemap_api.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_lambda_function" "tracemap_api" {

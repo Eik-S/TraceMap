@@ -1,25 +1,25 @@
 import { css } from '@emotion/react'
 import { useEffect } from 'react'
-import { useTweetInfoContext } from '../../../twitter-api/tweet-info-context'
-import { UserCard } from '../ui-elements/user-card'
+import { UserCard } from '../../ui-elements/user-card'
+import { useStatusInfoContext } from '../../../../contexts/status-info-context'
 
 interface RetweetersProps {
   onLoaded: () => void
 }
 
 export function Retweeters({ onLoaded, ...props }: RetweetersProps) {
-  const { retweetingUsers } = useTweetInfoContext()
+  const { rebloggedByUsers } = useStatusInfoContext()
 
   useEffect(() => {
-    if (retweetingUsers.length > 0) {
+    if (rebloggedByUsers.length > 0) {
       onLoaded()
     }
-  }, [onLoaded, retweetingUsers])
+  }, [onLoaded, rebloggedByUsers])
 
   return (
     <div css={styles.userCardList} {...props}>
-      {retweetingUsers.map((user) => (
-        <UserCard key={user.id} user={user} />
+      {rebloggedByUsers.map((user) => (
+        <UserCard key={user.acct} user={user} />
       ))}
     </div>
   )

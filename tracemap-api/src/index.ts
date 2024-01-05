@@ -4,13 +4,12 @@ import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-d
 import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import ServerlessHttp from 'serverless-http'
-import { activateSessionController } from './controllers/activate-session-controller'
-import { createSessionController } from './controllers/create-session-controller'
-import { restoreSessionController } from './controllers/restore-session-controller'
-import { tweetInfoController } from './controllers/twitter/tweet-info-controller'
-import { tweetRetweetedByController } from './controllers/twitter/tweet-retweeted-by-controller'
 import { isLocalDevelopment } from './utils/config'
 import { errorResponseMiddleware } from './utils/errors'
+import { getClientIdController } from './controllers/oauth/get-client-id-controller'
+import { getAccessTokenController } from './controllers/oauth/get-access-token-controller'
+import { verifyAccessTokenController } from './controllers/oauth/verify-access-token-controller'
+import { rebloggedByController } from './controllers/masto/reblogged-by-controller'
 
 if (isLocalDevelopment) {
   dotenv.config()
@@ -21,14 +20,19 @@ const PORT = 3030
 const server = new Koa()
 const router = new Router()
 
-router.get('/login/create-session', createSessionController)
-router.post('/login/activate-session', activateSessionController)
-router.post('/login/restore-session', restoreSessionController)
+router.get('/healthcheck', (ctx) => {
+  ctx.status = 200
+  ctx.message = 'OK'
+})
+router.get('/login/get-client-id', getClientIdController)
+router.get('/login/get-access-token', getAccessTokenController)
 
-router.post('/twitter/tweet-info', tweetInfoController)
-router.post('/twitter/tweet-retweeted-by', tweetRetweetedByController)
+router.get('/masto/verify-access-token', verifyAccessTokenController)
+router.get('/masto/reblogged-by', rebloggedByController)
 
-server.use(errorResponseMiddleware)
+if (isLocalDevelopment === false) {
+  server.use(errorResponseMiddleware)
+}
 server.use(cors())
 server.use(bodyParser())
 server.use(router.routes())

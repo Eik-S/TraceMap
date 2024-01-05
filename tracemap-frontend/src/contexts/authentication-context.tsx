@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo } from 'react'
-import { useTwitterLogin } from '../../services/useTwitterLogin'
+import { AccountData, useTracemapMastoApi } from '../services/useTracemapMastoApi'
 
 type LoggedOut = {
   state: 'logged-out'
@@ -12,7 +12,7 @@ type Loading = {
 
 type LoggedIn = {
   state: 'logged-in'
-  username: string
+  userData: AccountData
 }
 
 type LoginState = LoggedOut | Loading | LoggedIn
@@ -22,30 +22,24 @@ interface Authentication {
 }
 
 function useAuthentication(): Authentication {
-  const { tryToRestorePreviousSession } = useTwitterLogin()
+  const { isUsable, verifyAccessToken } = useTracemapMastoApi()
 
-  const {
-    data: username,
-    error,
-    isLoading,
-  } = useQuery({
+  const { data: accountData, isFetching } = useQuery({
     queryKey: ['loginState'],
-    enabled: !window.location.href.includes('callback'),
-    queryFn: async () => {
-      const username = await tryToRestorePreviousSession()
-      return username
-    },
+    retry: false,
+    enabled: isUsable,
+    queryFn: verifyAccessToken,
   })
 
   const loginState: LoginState = useMemo(() => {
-    if (isLoading) {
+    if (isFetching) {
       return { state: 'loading' }
     }
-    if (error) {
-      return { state: 'logged-out' }
+    if (accountData) {
+      return { state: 'logged-in', userData: accountData }
     }
-    return { state: 'logged-in', username: username! }
-  }, [error, isLoading, username])
+    return { state: 'logged-out' }
+  }, [isFetching, accountData])
 
   return {
     loginState,

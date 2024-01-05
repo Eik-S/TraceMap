@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { CircularProgress } from '@mui/material'
 import { useState } from 'react'
-import { colorGrayFontAccent } from '../../../styles/colors'
+import { colorGrayFontAccent, colorGrayLightDivider } from '../../../styles/colors'
 import { resetButtonStyles } from '../../../styles/utils'
 
 interface AccordionProps {
@@ -59,7 +59,7 @@ const styles = {
     padding-left: 20px;
     padding-right: 20px;
     background-color: #fff;
-    border-bottom: 1px solid #ccd0d9;
+    border-bottom: 1px solid ${colorGrayLightDivider};
     display: grid;
     grid-template-columns: 1fr 18px;
     grid-template-rows: 1fr;

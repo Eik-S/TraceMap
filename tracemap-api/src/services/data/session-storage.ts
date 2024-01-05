@@ -5,14 +5,13 @@ import {
   SessionNotFoundError,
   SessionNotPendingError,
 } from '../../utils/errors'
-import { TwitterSession } from '../twitter-authentication'
 
 const tableName = 'tracemap-sessions'
 
 const bareClient = new DynamoDBClient({ region: 'eu-central-1' })
 const ddb = DynamoDBDocumentClient.from(bareClient)
 
-export async function saveSession(sessionID: string, session: TwitterSession): Promise<void> {
+export async function saveSession(sessionID: string, session: any): Promise<void> {
   const expirationTimestamp = Math.floor(Date.now() / 1000) + 3600 * 48 // set to 2 days from now
   await ddb.send(
     new PutCommand({ TableName: tableName, Item: { ...session, sessionID, expirationTimestamp } }),
@@ -39,14 +38,14 @@ export async function getActiveSession(sessionID: string) {
   return session
 }
 
-export async function getSession(sessionID: string): Promise<TwitterSession> {
+export async function getSession(sessionID: string): Promise<any> {
   const { Item } = await ddb.send(new GetCommand({ TableName: tableName, Key: { sessionID } }))
 
   if (typeof Item === 'undefined') {
     throw new SessionNotFoundError()
   }
 
-  return Item as TwitterSession
+  return Item
 }
 
 export async function hasSession(sessionId: string): Promise<boolean> {

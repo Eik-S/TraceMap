@@ -1,5 +1,5 @@
 import { ReactElement, useEffect } from 'react'
-import { useAuthenticationContext } from './authenticationContext'
+import { useAuthenticationContext } from '../../contexts/authentication-context'
 
 export function ProtectedRoute({ children }: { children: ReactElement }): ReactElement {
   const { loginState } = useAuthenticationContext()
