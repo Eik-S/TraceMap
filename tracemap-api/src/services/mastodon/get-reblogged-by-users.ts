@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { UserData } from './verify-access-token'
 import { MastoErrorResponse, isErrorResponse } from '../oauth/client-id'
 import { MastoRecordNotFoundError } from '../../utils/errors'
+import { UserData } from 'tracemap-api-types'
 
 interface GetRebloggedByUsersParams {
   server: string
@@ -18,7 +18,7 @@ export async function getRebloggedByUsers({
   server,
   statusID,
   accessToken,
-}: GetRebloggedByUsersParams) {
+}: GetRebloggedByUsersParams): Promise<UserData[]> {
   const responseLimit = 80
   const url = `https://${server}/api/v1/statuses/${statusID}/reblogged_by?limit=${responseLimit}`
 

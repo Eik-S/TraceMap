@@ -1,9 +1,9 @@
 import { css } from '@emotion/react'
-import { AccountData } from '../services/useTracemapMastoApi'
 import { iconButton, mainButton } from '../styles/buttons'
 import { darkPurple } from '../styles/colors'
 import { sideGap } from '../styles/utils'
 import { useAuthenticationContext } from '../contexts/authentication-context'
+import { UserData } from 'tracemap-api-types'
 
 export function Header({ ...props }) {
   const { loginState } = useAuthenticationContext()
@@ -23,7 +23,7 @@ function logout() {
   document.location.href = '/'
 }
 
-function AccountCard({ username, avatar, url }: AccountData) {
+function AccountCard({ username, avatar, url }: UserData) {
   return (
     <div css={styles.accountCard}>
       <a href={url} target="_blank" rel="noreferrer" css={styles.username}>

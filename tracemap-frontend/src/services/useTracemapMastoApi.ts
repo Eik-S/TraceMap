@@ -1,18 +1,6 @@
+import { UserData } from 'tracemap-api-types'
 import { apiUrl } from '../utils/config'
 import { useLocalStorage } from '../utils/use-local-storage'
-
-export interface AccountData {
-  username: string
-  url: string
-  avatar: string
-  header: string
-  acct: string
-  id: string
-  following_count: number
-  followers_count: number
-  statuses_count: number
-  note: string
-}
 
 export function useTracemapMastoApi() {
   const accessToken = localStorage.getItem('access-token')
@@ -20,7 +8,7 @@ export function useTracemapMastoApi() {
 
   const isUsable = accessToken !== null && server !== ''
 
-  async function verifyAccessToken(): Promise<AccountData> {
+  async function verifyAccessToken(): Promise<UserData> {
     if (accessToken === null || server === '') {
       throw new Error(
         'access-token and server local storage objects mus be set to use tracemapMastoApi',
@@ -35,7 +23,7 @@ export function useTracemapMastoApi() {
     return response.json()
   }
 
-  async function getRebloggedByUsers(statusID: string): Promise<AccountData[] | undefined> {
+  async function getRebloggedByUsers(statusID: string): Promise<UserData[] | undefined> {
     if (accessToken === null || server === '') {
       return undefined
     }

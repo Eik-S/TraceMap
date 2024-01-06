@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "tracemap-frontend",
-    "tracemap-api"
+    "tracemap-api",
+    "tracemap-api-types"
   ],
   "devDependencies": {
     "concurrently": "^7.6.0",
@@ -14,7 +15,7 @@
   "scripts": {
     "start": "aws-vault exec private -- concurrently --kill-others \"npm run start --workspace tracemap-frontend\" \"npm run start --workspace tracemap-api\"",
     "tsc": "npm run tsc --workspaces",
-    "build": "npm run build --workspaces",
+    "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "prepare": "husky install"
   },

@@ -1,10 +1,10 @@
 import { css } from '@emotion/react'
 import { Fragment } from 'react'
-import { AccountData } from '../../../../services/useTracemapMastoApi'
 import { colorGrayFontDark, darkPurple } from '../../../../styles/colors'
 import { NumericMetric } from './numeric-metric'
+import { UserData } from 'tracemap-api-types'
 
-export function UserInfo({ userInfo }: { userInfo: AccountData }) {
+export function UserInfo({ userInfo }: { userInfo: UserData }) {
   return (
     <Fragment>
       <div css={styles.userDetails}>

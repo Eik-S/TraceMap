@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo } from 'react'
-import { AccountData, useTracemapMastoApi } from '../services/useTracemapMastoApi'
+import { useTracemapMastoApi } from '../services/useTracemapMastoApi'
+import { UserData } from 'tracemap-api-types'
 
 type LoggedOut = {
   state: 'logged-out'
@@ -12,7 +13,7 @@ type Loading = {
 
 type LoggedIn = {
   state: 'logged-in'
-  userData: AccountData
+  userData: UserData
 }
 
 type LoginState = LoggedOut | Loading | LoggedIn

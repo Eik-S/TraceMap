@@ -3,10 +3,10 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { colorGrayFontBlackish, colorParagraph, darkPurple } from '../../../styles/colors'
 import { userCardBoxShadow, userDetailsButtonBoxShadow } from '../../../styles/shadows'
-import { AccountData } from '../../../services/useTracemapMastoApi'
+import { UserData } from 'tracemap-api-types'
 
 interface UserCardProps {
-  user: AccountData
+  user: UserData
 }
 
 export function UserCard({ user, ...props }: UserCardProps) {
@@ -52,7 +52,7 @@ export function UserCard({ user, ...props }: UserCardProps) {
   )
 }
 
-export function User({ username, acct, avatar, url, ...props }: AccountData) {
+export function User({ username, acct, avatar, url, ...props }: UserData) {
   return (
     <div css={styles.wrapper} {...props}>
       <img css={styles.image} alt="" src={avatar} />

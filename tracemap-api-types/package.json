@@ -1,0 +1,13 @@
+{
+  "name": "tracemap-api-types",
+  "version": "0.1.0",
+  "types": "./index.ts",
+  "private": true,
+  "devDependencies": {
+    "typescript": "5.3.3"
+  },
+  "dependencies": {},
+  "scripts": {
+    "tsc": "tsc"
+  }
+}

@@ -1,6 +1,7 @@
 import { Context } from 'koa'
 import { getAuthorizationCodeHeader, getServerQueryParam } from '../../utils/request-params'
 import { getAccessToken } from '../../services/oauth/access-token'
+import { GetAccessTokenResponse } from 'tracemap-api-types'
 
 export async function getAccessTokenController(ctx: Context): Promise<void> {
   const server = getServerQueryParam(ctx)
@@ -15,5 +16,5 @@ export async function getAccessTokenController(ctx: Context): Promise<void> {
   }
 
   ctx.status = 200
-  ctx.body = { accessToken }
+  ctx.body = { accessToken } as GetAccessTokenResponse
 }
