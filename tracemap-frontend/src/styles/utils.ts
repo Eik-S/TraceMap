@@ -15,3 +15,9 @@ export const resetButtonStyles = css`
   border: none;
   cursor: pointer;
 `
+
+export const scrollContainer = css`
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+`

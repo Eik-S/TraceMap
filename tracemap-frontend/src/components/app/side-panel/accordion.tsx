@@ -24,7 +24,7 @@ export function Accordion({
   }
 
   return (
-    <div>
+    <div {...props}>
       <button css={styles.button(isOpen)} onClick={toggle} disabled={contentState === 'loading'}>
         <h2 css={styles.title}>{title}</h2>
 
@@ -85,8 +85,8 @@ const styles = {
     width: 18px;
   `,
   content: (isOpen: boolean) => css`
-    overflow: hidden;
     position: relative;
+    overflow: hidden;
     height: 0px;
     z-index: 2;
 

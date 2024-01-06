@@ -9,6 +9,8 @@ export interface UserData {
   id: string
   following_count: number
   followers_count: number
+  statuses_count: number
+  note: string
 }
 
 export async function verifyAccessToken(server: string, accessToken: string): Promise<UserData> {
@@ -16,8 +18,18 @@ export async function verifyAccessToken(server: string, accessToken: string): Pr
     headers: { Authorization: `Bearer ${accessToken}` },
   })
 
-  const { username, url, avatar, header, acct, id, followers_count, following_count } =
-    response.data
+  const {
+    username,
+    url,
+    avatar,
+    header,
+    acct,
+    id,
+    followers_count,
+    following_count,
+    statuses_count,
+    note,
+  } = response.data
   return {
     username,
     url,
@@ -27,5 +39,7 @@ export async function verifyAccessToken(server: string, accessToken: string): Pr
     id,
     followers_count,
     following_count,
+    statuses_count,
+    note,
   }
 }

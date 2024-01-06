@@ -10,6 +10,8 @@ export interface AccountData {
   id: string
   following_count: number
   followers_count: number
+  statuses_count: number
+  note: string
 }
 
 export function useTracemapMastoApi() {

@@ -7,7 +7,7 @@ interface RetweetersProps {
   onLoaded: () => void
 }
 
-export function Retweeters({ onLoaded, ...props }: RetweetersProps) {
+export function SharedByUsers({ onLoaded, ...props }: RetweetersProps) {
   const { rebloggedByUsers } = useStatusInfoContext()
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export function Retweeters({ onLoaded, ...props }: RetweetersProps) {
 
 const styles = {
   userCardList: css`
-    margin: 20px 20px 6px;
+    margin: 20px;
     display: flex;
     flex-direction: column;
     row-gap: 14px;

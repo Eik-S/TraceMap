@@ -26,7 +26,7 @@ export function App() {
               <Route path="/" element={<Home />} />
               <Route path="login/callback" element={<Callback />} />
               <Route
-                path="app/:status/:userID"
+                path="app/:status/:username"
                 element={
                   <ProtectedRoute>
                     <AppWrapper />

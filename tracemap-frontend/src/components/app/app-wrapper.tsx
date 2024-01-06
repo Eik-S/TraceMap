@@ -21,6 +21,7 @@ const styles = {
   wrapper: css`
     display: grid;
     height: 100vh;
+    overflow: hidden;
     grid-template-columns: 370px 1fr;
     grid-template-rows: auto 1fr;
 

@@ -1,5 +1,8 @@
 import { createContext, useContext } from 'react'
-import { AccountData } from '../services/useTracemapMastoApi'
+import { useParams } from 'react-router-dom'
+import { useStatusInfoContext } from './status-info-context'
+import { UserTimelineBatch, useMastoClientApi } from '../services/useMastoClientApi'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 export interface RetweetingUser {
   userID: string
@@ -8,50 +11,39 @@ export interface RetweetingUser {
   profileImageUrl?: string
 }
 
-function useUserInfo(accountData: AccountData) {
-  // const { data: userInfo } = useQuery({
-  //   queryKey: ['userInfo', userID],
-  //   enabled: typeof userID !== 'undefined',
-  //   queryFn: async () => {
-  //     const response = await getUserInfo(userID!)
-  //     return response
-  //   },
-  // })
+function useUserInfo() {
+  const { rebloggedByUsers, statusServer } = useStatusInfoContext()
+  const { getUserTimeline } = useMastoClientApi()
+  const { username } = useParams()
+  const accountData = rebloggedByUsers.find((user) => user.acct === username)
 
-  // const {
-  //   data: getTimelineResponse,
-  //   fetchNextPage,
-  //   hasNextPage,
-  // } = useInfiniteQuery({
-  //   queryKey: ['userTimeline', userID],
-  //   enabled: typeof userID !== 'undefined',
-  //   getNextPageParam: (lastPage: TweetV2PaginableTimelineResult) => lastPage.meta.next_token,
-  //   queryFn: async ({ pageParam = undefined }) => {
-  //     const response = await getUserTimeline(userID!, pageParam)
-  //     return response
-  //   },
-  // })
+  const {
+    data: getTimelineResponse,
+    fetchNextPage: fetchNextTimelinePage,
+    hasNextPage: hasNextTimelinePage,
+  } = useInfiniteQuery({
+    queryKey: ['userTimeline', accountData?.id],
+    enabled: typeof accountData !== 'undefined',
+    getNextPageParam: (lastPage: UserTimelineBatch) => lastPage.nextUrl,
+    queryFn: async ({ pageParam = undefined }) => {
+      return getUserTimeline(statusServer!, accountData!.id, pageParam)
+    },
+  })
 
-  // const userTimeline = getTimelineResponse?.pages.flatMap((page) => page.data) ?? []
+  const userTimeline = getTimelineResponse?.pages.flatMap((page) => page.data) ?? []
 
   return {
     userInfo: accountData,
-    userTimeline: {},
-    hasNextTimelinePage: true,
-    fetchNextTimelinePage: () => null,
+    userTimeline,
+    hasNextTimelinePage,
+    fetchNextTimelinePage,
   }
 }
 
 const UserInfoContext = createContext<ReturnType<typeof useUserInfo> | undefined>(undefined)
 
-export function UserInfoProvider({
-  accountData,
-  children,
-}: {
-  accountData: AccountData
-  children: React.ReactNode
-}) {
-  const userInfo = useUserInfo(accountData)
+export function UserInfoProvider({ children }: { children: React.ReactNode }) {
+  const userInfo = useUserInfo()
 
   return <UserInfoContext.Provider value={userInfo}>{children}</UserInfoContext.Provider>
 }

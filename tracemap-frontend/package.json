@@ -18,7 +18,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "typescript": "^4.7.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "wordcloud": "^1.2.2"
   },
   "devDependencies": {
     "@emotion/babel-preset-css-prop": "^11.10.0",

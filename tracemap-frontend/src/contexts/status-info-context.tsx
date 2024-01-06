@@ -47,6 +47,7 @@ function useStatusInfo() {
 
   return {
     statusInfo,
+    statusServer,
     rebloggedByUsers: rebloggedByUsers || [],
     totalFollowing,
     totalFollowers,

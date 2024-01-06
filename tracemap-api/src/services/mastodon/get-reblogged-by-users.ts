@@ -59,6 +59,8 @@ async function getBatchOfRebloggedByUsers(
       id: user.id,
       following_count: user.following_count,
       followers_count: user.followers_count,
+      statuses_count: user.statuses_count,
+      note: user.note,
     }))
     const nextUrl = getNextBatchRequestUrl(response)
 
