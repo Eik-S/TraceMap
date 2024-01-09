@@ -10,6 +10,15 @@ export function getServerQueryParam(ctx: Context): string {
   return (serverQueryParam instanceof Array ? serverQueryParam[0] : serverQueryParam) as string
 }
 
+export function getNextPageUrlQueryParam(ctx: Context): string | undefined {
+  const serverQueryParam = ctx.query.nextPageUrl
+  if (typeof serverQueryParam === 'undefined') {
+    return undefined
+  }
+
+  return (serverQueryParam instanceof Array ? serverQueryParam[0] : serverQueryParam) as string
+}
+
 export function getStatusIDQueryParam(ctx: Context): string {
   const statusIDQueryParam = ctx.query.statusID
   if (typeof statusIDQueryParam === 'undefined') {

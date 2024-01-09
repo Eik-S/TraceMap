@@ -6,8 +6,9 @@ import {
   getStatusIDQueryParam,
 } from '../../utils/request-params'
 import { MastoRecordNotFoundError } from '../../utils/errors'
+import { UserData } from 'tracemap-api-types'
 
-export async function rebloggedByController(ctx: Context) {
+export async function rebloggedByController(ctx: Context): Promise<void | UserData[]> {
   const server = getServerQueryParam(ctx)
   const statusID = getStatusIDQueryParam(ctx)
   const accessToken = getAccessTokenHeader(ctx)

@@ -10,6 +10,7 @@ import { getClientIdController } from './controllers/oauth/get-client-id-control
 import { getAccessTokenController } from './controllers/oauth/get-access-token-controller'
 import { verifyAccessTokenController } from './controllers/oauth/verify-access-token-controller'
 import { rebloggedByController } from './controllers/masto/reblogged-by-controller'
+import { homeTimelineController } from './controllers/masto/home-timeline-controller'
 
 if (isLocalDevelopment) {
   dotenv.config()
@@ -29,6 +30,7 @@ router.get('/login/get-access-token', getAccessTokenController)
 
 router.get('/masto/verify-access-token', verifyAccessTokenController)
 router.get('/masto/reblogged-by', rebloggedByController)
+router.get('/masto/timelines/home', homeTimelineController)
 
 if (isLocalDevelopment === false) {
   server.use(errorResponseMiddleware)

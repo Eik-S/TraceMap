@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
-import { Status } from '../../../../services/useMastoClientApi'
 import { TootCard } from '../../ui-elements/toot/toot-card'
+import { Status } from 'tracemap-api-types'
 
 interface TimelineProps {
   content: Status[]

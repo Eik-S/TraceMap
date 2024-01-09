@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { colorGrayFontLight } from '../../../../styles/colors'
 import { Toot } from './toot'
 import { TootInfo } from './toot-info'
-import { Status } from '../../../../services/useMastoClientApi'
+import { Status } from 'tracemap-api-types'
 
 export interface TootCardProps {
   status: Status

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useMastoClientApi } from '../services/useMastoClientApi'
 import { useTracemapMastoApi } from '../services/useTracemapMastoApi'
@@ -58,7 +58,7 @@ function useStatusInfo() {
 
 const StatusInfoContext = createContext<ReturnType<typeof useStatusInfo> | undefined>(undefined)
 
-export function StatusInfoProvider({ children }: { children: React.ReactNode }) {
+export function StatusInfoProvider({ children }: { children: ReactNode }) {
   const statusInfo = useStatusInfo()
 
   return <StatusInfoContext.Provider value={statusInfo}>{children}</StatusInfoContext.Provider>

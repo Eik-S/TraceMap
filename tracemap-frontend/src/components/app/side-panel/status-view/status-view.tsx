@@ -6,6 +6,8 @@ import { scrollContainer } from '../../../../styles/utils'
 import { Accordion } from '../accordion'
 import { SourceStatus } from '../source-status'
 import { SharedByUsers } from './shared-by-users'
+import { HomeTimeline } from './home-timeline'
+import { TracemapUserProvider } from '../../../../contexts/tracemap-user-context'
 
 type LoadingState = 'loading' | 'loaded'
 
@@ -16,14 +18,20 @@ interface StatusViewProps {
 export function StatusView({ children, ...props }: StatusViewProps) {
   const { statusInfo } = useStatusInfoContext()
   const statusID = statusInfo?.id
-  const showAccordions = statusID !== undefined
+  const showHomeTimeline = statusID === undefined
+  const showStatusInfo = statusID !== undefined
 
   const [sourceStatusState, setSourceStatusState] = useState<LoadingState>('loading')
   const [sharedByState, setSharedByState] = useState<LoadingState>('loading')
   return (
     <div css={styles.wrapper} {...props}>
       {children}
-      {showAccordions && (
+      {showHomeTimeline && (
+        <TracemapUserProvider>
+          <HomeTimeline />
+        </TracemapUserProvider>
+      )}
+      {showStatusInfo && (
         <div css={styles.accordeons}>
           <Accordion contentState={sourceStatusState} title="Source Status" renderOpen={true}>
             <SourceStatus onLoaded={() => setSourceStatusState('loaded')} />

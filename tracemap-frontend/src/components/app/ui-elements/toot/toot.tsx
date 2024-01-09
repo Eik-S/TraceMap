@@ -1,5 +1,4 @@
 import { css } from '@emotion/react'
-import { Status } from '../../../../services/useMastoClientApi'
 import {
   colorGrayFontAccent,
   colorGrayFontLight,
@@ -7,6 +6,7 @@ import {
   lightPurple,
 } from '../../../../styles/colors'
 import { User } from '../user'
+import { Status } from 'tracemap-api-types'
 
 interface TootProps {
   status: Status

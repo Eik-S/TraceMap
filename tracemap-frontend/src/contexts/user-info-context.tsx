@@ -1,8 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { UserTimelineBatch, useMastoClientApi } from '../services/useMastoClientApi'
+import { useMastoClientApi } from '../services/useMastoClientApi'
 import { useStatusInfoContext } from './status-info-context'
+import { UserTimelineBatch } from 'tracemap-api-types'
 
 export interface RetweetingUser {
   userID: string

@@ -1,4 +1,4 @@
-import { PreviewCard } from '../../../../services/useMastoClientApi'
+import { PreviewCard } from 'tracemap-api-types'
 
 interface TootPreviewCardProps {
   card: PreviewCard
