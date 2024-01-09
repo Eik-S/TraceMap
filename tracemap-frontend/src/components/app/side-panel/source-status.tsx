@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { useEffect } from 'react'
 import { useStatusInfoContext } from '../../../contexts/status-info-context'
-import { Toot } from '../ui-elements/toot'
+import { Toot } from '../ui-elements/toot/toot'
 
 interface SourceTootProps {
   onLoaded: () => void

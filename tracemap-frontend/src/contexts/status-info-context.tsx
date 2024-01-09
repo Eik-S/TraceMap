@@ -17,7 +17,7 @@ function useStatusInfo() {
     enabled: typeof statusID !== 'undefined' || typeof statusServer !== 'undefined',
     retry: false,
     queryFn: async () => {
-      const response = await getRebloggedByUsers(statusID!)
+      const response = await getRebloggedByUsers(statusServer!, statusID!)
       return response
     },
   })
@@ -36,12 +36,14 @@ function useStatusInfo() {
       return
     }
     setTotalFollowers(
-      rebloggedByUsers?.map((user) => user.followers_count).reduce((sum, curr) => (sum += curr)) ||
-        0,
+      rebloggedByUsers
+        ?.map((user) => user.followers_count)
+        .reduce((sum, curr) => (sum += curr), 0) || 0,
     )
     setTotalFollowing(
-      rebloggedByUsers?.map((user) => user.following_count).reduce((sum, curr) => (sum += curr)) ||
-        0,
+      rebloggedByUsers
+        ?.map((user) => user.following_count)
+        .reduce((sum, curr) => (sum += curr), 0) || 0,
     )
   }, [rebloggedByUsers])
 

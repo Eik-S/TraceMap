@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
 
 export const sideGap = '24px'
+export const sideGapMobile = '12px'
 
 export const resetInputStyles = css`
   background-color: transparent;
@@ -21,3 +22,8 @@ export const scrollContainer = css`
   overflow-y: auto;
   overflow-x: hidden;
 `
+
+export const mediaQuery = {
+  mobile: '@media screen and (max-width: 900px)',
+  desktop: '@media screen and (min-width: 901px)',
+}

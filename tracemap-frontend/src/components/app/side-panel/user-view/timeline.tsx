@@ -1,17 +1,16 @@
 import { css } from '@emotion/react'
 import { Status } from '../../../../services/useMastoClientApi'
-import { Toot } from '../../ui-elements/toot'
+import { TootCard } from '../../ui-elements/toot/toot-card'
 
 interface TimelineProps {
   content: Status[]
-  fetchNextTimelinePage: () => void
 }
 
-export function Timeline({ content, fetchNextTimelinePage }: TimelineProps) {
+export function Timeline({ content }: TimelineProps) {
   return (
     <div css={styles.timelineWrapper}>
       {content.map((status) => (
-        <Toot status={status} key={status.id} />
+        <TootCard status={status} key={status.id} />
       ))}
     </div>
   )
@@ -19,7 +18,8 @@ export function Timeline({ content, fetchNextTimelinePage }: TimelineProps) {
 
 const styles = {
   timelineWrapper: css`
-    margin: 20px;
+    margin: 20px auto;
+    padding: 0 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;

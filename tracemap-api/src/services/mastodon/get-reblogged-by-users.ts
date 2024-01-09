@@ -50,18 +50,7 @@ async function getBatchOfRebloggedByUsers(
       throw new Error(response.data.error)
     }
 
-    const data = response.data.map((user) => ({
-      username: user.username,
-      url: user.url,
-      avatar: user.avatar,
-      header: user.header,
-      acct: user.acct,
-      id: user.id,
-      following_count: user.following_count,
-      followers_count: user.followers_count,
-      statuses_count: user.statuses_count,
-      note: user.note,
-    }))
+    const data = response.data
     const nextUrl = getNextBatchRequestUrl(response)
 
     return {

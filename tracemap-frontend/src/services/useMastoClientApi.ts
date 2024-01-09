@@ -1,14 +1,11 @@
-export interface Emoji {
-  shortcode: string
-  url: string
-}
+import { UserData } from 'tracemap-api-types'
 
-export interface Account {
-  display_name: string
-  acct: string
+export interface PreviewCard {
   url: string
-  avatar: string
-  emojis: Emoji[]
+  title: string
+  description: string
+  type: 'link' | 'photo' | 'video'
+  image: string
 }
 
 export interface Status {
@@ -17,7 +14,9 @@ export interface Status {
   url: string
   reblogs_count: number
   content: string
-  account: Account
+  account: UserData
+  reblog: Status | null
+  card: PreviewCard | null
 }
 
 export interface UserTimelineBatch {
@@ -40,9 +39,7 @@ export function useMastoClientApi() {
     id: string,
     nextPageUrl?: string,
   ): Promise<UserTimelineBatch> {
-    const url =
-      nextPageUrl ||
-      `https://${server}/api/v1/accounts/${id}/statuses?limit=40&exclude_reblogs=true`
+    const url = nextPageUrl || `https://${server}/api/v1/accounts/${id}/statuses?limit=40`
     const response = await fetch(url)
     const data = await response.json()
 

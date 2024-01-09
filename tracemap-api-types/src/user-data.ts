@@ -1,3 +1,8 @@
+export interface Emoji {
+  shortcode: string
+  url: string
+}
+
 export interface UserData {
   username: string
   url: string
@@ -9,4 +14,5 @@ export interface UserData {
   followers_count: number
   statuses_count: number
   note: string
+  emojis: Emoji[]
 }

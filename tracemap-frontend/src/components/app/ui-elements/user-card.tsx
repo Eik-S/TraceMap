@@ -1,17 +1,13 @@
 import { css } from '@emotion/react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { colorGrayFontBlackish, colorParagraph, darkPurple } from '../../../styles/colors'
+import { darkPurple } from '../../../styles/colors'
 import { userCardBoxShadow, userDetailsButtonBoxShadow } from '../../../styles/shadows'
-import { UserData } from 'tracemap-api-types'
+import { User, UserProps } from './user'
 
-interface UserCardProps {
-  user: UserData
-}
-
-export function UserCard({ user, ...props }: UserCardProps) {
+export function UserCard({ user, ...props }: UserProps) {
   const [isHovered, setIsHovered] = useState(false)
-  const { userID } = useParams()
+  const { username: currentUser } = useParams()
 
   return (
     <div
@@ -20,10 +16,10 @@ export function UserCard({ user, ...props }: UserCardProps) {
       onMouseLeave={() => setIsHovered(false)}
       {...props}
     >
-      <User css={styles.user} {...user} />
+      <User user={user} css={styles.user} />
       <Link
         css={styles.linkButton(isHovered)}
-        to={userID ? `../${user.acct}` : `${user.acct}`}
+        to={currentUser ? `../${user.acct}` : `${user.acct}`}
         relative="path"
       >
         {isHovered ? (
@@ -52,38 +48,21 @@ export function UserCard({ user, ...props }: UserCardProps) {
   )
 }
 
-export function User({ username, acct, avatar, url, ...props }: UserData) {
-  return (
-    <div css={styles.wrapper} {...props}>
-      <img css={styles.image} alt="" src={avatar} />
-      <a
-        css={styles.twitterLink}
-        href={url}
-        target="_blank"
-        rel="noreferrer"
-        title="view on Mastodon"
-      >
-        <h3 css={styles.name}>{username}</h3>
-        <p css={styles.screenName}>@{acct}</p>
-      </a>
-    </div>
-  )
-}
-
 const styles = {
   userCard: css`
     height: 66px;
-    width: 320px;
+    min-width: 330px;
+    max-width: 370px;
     background-color: #fff;
     border-radius: 6px;
     text-decoration: none;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding-left: 14px;
+    column-gap: 12px;
     ${userCardBoxShadow}
   `,
   user: css`
-    align-items: center;
-    padding-left: 14px;
-    width: 272px;
     overflow: hidden;
   `,
   linkButton: (highlighted: boolean) => css`
@@ -110,35 +89,5 @@ const styles = {
         opacity: 1;
       }
     `}
-  `,
-  wrapper: css`
-    display: flex;
-    column-gap: 12px;
-  `,
-  image: css`
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-  `,
-  twitterLink: css`
-    text-decoration: none;
-  `,
-  name: css`
-    line-height: 19px;
-    font-size: 14px;
-    margin: 0;
-    font-weight: bold;
-    white-space: nowrap;
-    color: ${colorGrayFontBlackish};
-    &:hover {
-      color: ${darkPurple};
-    }
-  `,
-  screenName: css`
-    line-height: 19px;
-    font-size: 14px;
-    margin: 0;
-    color: ${colorParagraph};
-    white-space: nowrap;
   `,
 }

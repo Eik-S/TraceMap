@@ -27,7 +27,7 @@ export function SharedByUsers({ onLoaded, ...props }: RetweetersProps) {
 
 const styles = {
   userCardList: css`
-    margin: 20px;
+    margin: 20px 0;
     display: flex;
     flex-direction: column;
     row-gap: 14px;

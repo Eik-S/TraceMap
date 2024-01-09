@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo } from 'react'
 import { useTracemapMastoApi } from '../services/useTracemapMastoApi'
 import { UserData } from 'tracemap-api-types'
+import { useLocalStorage } from '../utils/use-local-storage'
 
 type LoggedOut = {
   state: 'logged-out'
@@ -24,12 +25,13 @@ interface Authentication {
 
 function useAuthentication(): Authentication {
   const { isUsable, verifyAccessToken } = useTracemapMastoApi()
+  const [server] = useLocalStorage('server', '')
 
   const { data: accountData, isFetching } = useQuery({
     queryKey: ['loginState'],
     retry: false,
-    enabled: isUsable,
-    queryFn: verifyAccessToken,
+    enabled: isUsable && server !== '',
+    queryFn: () => verifyAccessToken(server),
   })
 
   const loginState: LoginState = useMemo(() => {

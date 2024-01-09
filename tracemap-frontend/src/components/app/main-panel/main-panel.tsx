@@ -3,7 +3,7 @@ import { useStatusInfoContext } from '../../../contexts/status-info-context'
 import { mainButton } from '../../../styles/buttons'
 import { colorGrayFontBlackish, colorGrayFontLight, lightPurple } from '../../../styles/colors'
 
-export function MainPanel() {
+export function MainPanel({ ...props }) {
   const { totalFollowers, totalFollowing } = useStatusInfoContext()
   // Calculated by default rate limits of mastodon API:
   //    80 followers/followees per request, 300 request per 5 minutes
@@ -11,7 +11,7 @@ export function MainPanel() {
   const timeEstimated = Math.ceil((apiRequests / 300) * 5)
 
   return (
-    <div css={styles.wrapper}>
+    <div css={styles.wrapper} {...props}>
       <div css={styles.infoBox}>
         <div css={styles.labelBox}>
           <label htmlFor="generation-time-estimation">time estimated</label>
@@ -49,6 +49,8 @@ const styles = {
     padding: 24px;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 24px;
   `,
   labelBox: css`

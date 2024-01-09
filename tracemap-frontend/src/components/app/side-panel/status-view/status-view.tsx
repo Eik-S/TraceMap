@@ -1,16 +1,19 @@
 import { css } from '@mui/material'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useStatusInfoContext } from '../../../../contexts/status-info-context'
 import { colorGrayBg } from '../../../../styles/colors'
 import { scrollContainer } from '../../../../styles/utils'
 import { Accordion } from '../accordion'
-import { SearchBar } from '../search-bar'
 import { SourceStatus } from '../source-status'
 import { SharedByUsers } from './shared-by-users'
 
 type LoadingState = 'loading' | 'loaded'
 
-export function StatusView() {
+interface StatusViewProps {
+  children?: ReactNode
+}
+
+export function StatusView({ children, ...props }: StatusViewProps) {
   const { statusInfo } = useStatusInfoContext()
   const statusID = statusInfo?.id
   const showAccordions = statusID !== undefined
@@ -18,8 +21,8 @@ export function StatusView() {
   const [sourceStatusState, setSourceStatusState] = useState<LoadingState>('loading')
   const [sharedByState, setSharedByState] = useState<LoadingState>('loading')
   return (
-    <div css={styles.wrapper}>
-      <SearchBar />
+    <div css={styles.wrapper} {...props}>
+      {children}
       {showAccordions && (
         <div css={styles.accordeons}>
           <Accordion contentState={sourceStatusState} title="Source Status" renderOpen={true}>
@@ -37,13 +40,10 @@ export function StatusView() {
 const styles = {
   wrapper: css`
     background-color: ${colorGrayBg};
-    display: grid;
     overflow: hidden;
+    display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 72px minmax(300px, 1fr);
-    grid-template-areas:
-      'searchbar'
-      'accordeons';
+    grid-template-rows: auto minmax(300px, 1fr);
   `,
   accordeons: css`
     grid-area: 'accordeons';

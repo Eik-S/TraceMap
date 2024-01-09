@@ -1,7 +1,8 @@
 import { css } from '@emotion/react'
 import { useState } from 'react'
-import { colorGrayFontDark, colorGrayPlaceholder } from '../../../styles/colors'
-import { resetButtonStyles, resetInputStyles } from '../../../styles/utils'
+import { colorGrayPlaceholder } from '../../../styles/colors'
+import { resetInputStyles } from '../../../styles/utils'
+import { IconButton } from '../ui-elements/icon-button'
 
 export function SearchBar({ ...props }) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -45,16 +46,12 @@ export function SearchBar({ ...props }) {
         onKeyDown={(event) => handleKeyboardEvent(event)}
         placeholder="Enter Tweet URL"
       />
-      <button css={styles.searchButton} onClick={() => search()}>
-        <img
-          srcSet="
-          /icons/loupe-fat_128.png 4x,
-          /icons/loupe-fat_64.png 2x,
-          /icons/loupe-fat_32.png 1x,"
-          src="/icons/loupe_32.png"
-          alt=""
-        />
-      </button>
+      <IconButton
+        css={styles.loupe}
+        icon="loupe"
+        ariaLabel="submit search"
+        onClick={() => search()}
+      />
     </div>
   )
 }
@@ -64,13 +61,10 @@ const styles = {
     position: relative;
     height: 72px;
     width: 100%;
-    z-index: 3;
-    background-color: ${colorGrayFontDark};
-    align-items: center;
+
     display: grid;
-    padding: 0 30px 0 20px;
-    grid-template-columns: 1fr 20px;
-    grid-template-rows: 1fr;
+    grid-template-columns: 1fr auto;
+    align-items: center;
   `,
   searchInput: css`
     ${resetInputStyles}
@@ -84,15 +78,7 @@ const styles = {
       opacity: 1;
     }
   `,
-  searchButton: css`
-    ${resetButtonStyles}
-    width: 20px;
-    img {
-      width: 100%;
-    }
-
-    &:active {
-      transform: scale(0.9);
-    }
+  loupe: css`
+    padding-right: 0;
   `,
 }

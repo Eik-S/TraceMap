@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { iconButton, mainButton } from '../styles/buttons'
 import { darkPurple } from '../styles/colors'
-import { sideGap } from '../styles/utils'
+import { mediaQuery, sideGap, sideGapMobile } from '../styles/utils'
 import { useAuthenticationContext } from '../contexts/authentication-context'
 import { UserData } from 'tracemap-api-types'
 
@@ -49,18 +49,26 @@ const styles = {
     font-weight: 600;
     color: ${darkPurple};
     letter-spacing: 3px;
+
     padding-left: ${sideGap};
+    ${mediaQuery.mobile} {
+      padding-left: ${sideGapMobile};
+    }
   `,
   accountCard: css`
     height: 60px;
-    padding-right: ${sideGap};
 
     display: grid;
     grid-template-columns: auto auto;
     grid-template-rows: auto auto;
     grid-column-gap: 12px;
-    align-items: baseline;
+    align-items: center;
     justify-items: right;
+
+    padding-right: ${sideGap};
+    ${mediaQuery.mobile} {
+      padding-right: 8px;
+    }
   `,
   username: css`
     color: ${darkPurple};

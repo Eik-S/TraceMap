@@ -1,8 +1,8 @@
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { useStatusInfoContext } from './status-info-context'
 import { UserTimelineBatch, useMastoClientApi } from '../services/useMastoClientApi'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useStatusInfoContext } from './status-info-context'
 
 export interface RetweetingUser {
   userID: string
@@ -15,25 +15,25 @@ function useUserInfo() {
   const { rebloggedByUsers, statusServer } = useStatusInfoContext()
   const { getUserTimeline } = useMastoClientApi()
   const { username } = useParams()
-  const accountData = rebloggedByUsers.find((user) => user.acct === username)
+  const userData = rebloggedByUsers.find((user) => user.acct === username)
 
   const {
     data: getTimelineResponse,
     fetchNextPage: fetchNextTimelinePage,
     hasNextPage: hasNextTimelinePage,
   } = useInfiniteQuery({
-    queryKey: ['userTimeline', accountData?.id],
-    enabled: typeof accountData !== 'undefined',
+    queryKey: ['userTimeline', userData?.id],
+    enabled: typeof userData !== 'undefined',
     getNextPageParam: (lastPage: UserTimelineBatch) => lastPage.nextUrl,
     queryFn: async ({ pageParam = undefined }) => {
-      return getUserTimeline(statusServer!, accountData!.id, pageParam)
+      return getUserTimeline(statusServer!, userData!.id, pageParam)
     },
   })
 
   const userTimeline = getTimelineResponse?.pages.flatMap((page) => page.data) ?? []
 
   return {
-    userInfo: accountData,
+    userInfo: userData,
     userTimeline,
     hasNextTimelinePage,
     fetchNextTimelinePage,
