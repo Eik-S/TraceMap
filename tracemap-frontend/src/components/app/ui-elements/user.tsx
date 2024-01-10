@@ -1,13 +1,14 @@
 import { css } from '@emotion/react'
-import { darkPurple, colorGrayFontBlackish, colorParagraph } from '../../../styles/colors'
 import { UserData } from 'tracemap-api-types'
+import { colorGrayFontBlackish, colorParagraph, darkPurple } from '../../../styles/colors'
+import { TextWithCustomEmojis } from './text-with-custom-emojis'
 
 export interface UserProps {
   user: UserData
 }
 
 export function User({ user, ...props }: UserProps) {
-  const { avatar, url, username, acct } = user
+  const { avatar, url, display_name, acct } = user
 
   return (
     <a
@@ -19,7 +20,9 @@ export function User({ user, ...props }: UserProps) {
       {...props}
     >
       <img css={styles.image} alt="" src={avatar} />
-      <h3 css={styles.name}>{username}</h3>
+      <h3 css={styles.name}>
+        <TextWithCustomEmojis emojis={user.emojis} input={display_name} />
+      </h3>
       <span css={styles.screenName}>@{acct}</span>
     </a>
   )

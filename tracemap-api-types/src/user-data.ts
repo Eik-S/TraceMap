@@ -4,6 +4,7 @@ export interface Emoji {
 }
 
 export interface UserData {
+  display_name: string
   username: string
   url: string
   avatar: string

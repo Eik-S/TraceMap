@@ -1,39 +1,23 @@
 import { css } from '@emotion/react'
-import { CircularProgress } from '@mui/material'
-import { useEffect, useState } from 'react'
 import { useUserInfoContext } from '../../../../contexts/user-info-context'
 import { colorGrayBgLight } from '../../../../styles/colors'
 import { mediaQuery, scrollContainer } from '../../../../styles/utils'
 import { IconButton } from '../../ui-elements/icon-button'
 import { User } from '../../ui-elements/user'
-import { Timeline } from './timeline'
 import { UserInfo } from './user-info'
 import { WordCloud } from './word-cloud'
+import { useInfiniteTimeline } from '../../ui-elements/use-infinite-timeline'
 
 export function UserView({ ...props }) {
   const { userInfo, userTimeline, fetchNextTimelinePage } = useUserInfoContext()
+  const { infiniteTimeline, fetchMorePostsIfOnBottom } = useInfiniteTimeline({
+    data: userTimeline,
+    fetchNextPage: fetchNextTimelinePage,
+  })
   const open = typeof userInfo !== 'undefined'
-
-  const [isFetching, setIsFetching] = useState(false)
-
-  useEffect(() => {
-    setIsFetching(false)
-  }, [userTimeline.length])
 
   function closeUserDetails() {
     window.history.back()
-  }
-
-  async function fetchMorePostsIfOnBottom(element: HTMLDivElement) {
-    if (isFetching) {
-      return
-    }
-    const scrollLeft = element.scrollHeight - (element.scrollTop + element.offsetHeight)
-    if (scrollLeft < 300) {
-      setIsFetching(true)
-      void (await fetchNextTimelinePage())
-      setIsFetching(false)
-    }
   }
 
   return (
@@ -51,14 +35,10 @@ export function UserView({ ...props }) {
           <User user={userInfo} />
         </div>
       )}
-      <div
-        css={styles.timelineWrapper}
-        onScroll={(event) => fetchMorePostsIfOnBottom(event.target as HTMLDivElement)}
-      >
+      <div css={scrollContainer} onScroll={fetchMorePostsIfOnBottom}>
         {userInfo && <UserInfo userInfo={userInfo} />}
         <WordCloud />
-        <Timeline content={userTimeline} />
-        <CircularProgress css={styles.loadingSpinner} />
+        {infiniteTimeline}
       </div>
     </div>
   )
@@ -111,14 +91,5 @@ const styles = {
     background-color: white;
     box-shadow: 0 0 1px 0 rgba(36, 41, 51, 0.1), 0 2px 2px 0 rgba(15, 19, 26, 0.1),
       0 2px 4px 0 rgba(15, 19, 26, 0.1);
-  `,
-  timelineWrapper: css`
-    display: flex;
-    flex-direction: column;
-    ${scrollContainer}
-  `,
-  loadingSpinner: css`
-    margin-bottom: 25px;
-    align-self: center;
   `,
 }

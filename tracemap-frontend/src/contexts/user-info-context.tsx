@@ -36,7 +36,7 @@ function useUserInfo() {
   return {
     userInfo: userData,
     userTimeline,
-    hasNextTimelinePage,
+    hasNextTimelinePage: typeof hasNextTimelinePage === 'undefined' ? true : hasNextTimelinePage,
     fetchNextTimelinePage,
   }
 }
