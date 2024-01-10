@@ -30,6 +30,5 @@ const styles = {
   wrapper: css`
     display: flex;
     justify-content: center;
-    margin: 16px 0;
   `,
 }

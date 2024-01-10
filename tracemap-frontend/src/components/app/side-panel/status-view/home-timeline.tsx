@@ -1,11 +1,11 @@
 import { useTracemapUserContext } from '../../../../contexts/tracemap-user-context'
 import { scrollContainer } from '../../../../styles/utils'
-import { useInfiniteTimeline } from '../../ui-elements/use-infinite-timeline'
+import { useInfiniteTimeline } from '../../ui-elements/timeline/use-infinite-timeline'
 import { Accordion } from '../accordion'
 
 export function HomeTimeline() {
   const { homeTimeline, fetchNextTimelinePage } = useTracemapUserContext()
-  const { infiniteTimeline, fetchMorePostsIfOnBottom } = useInfiniteTimeline({
+  const { InfiniteTimeline, fetchMorePostsIfOnBottom } = useInfiniteTimeline({
     data: homeTimeline,
     fetchNextPage: fetchNextTimelinePage,
   })
@@ -14,7 +14,7 @@ export function HomeTimeline() {
   return (
     <div css={scrollContainer} onScroll={fetchMorePostsIfOnBottom}>
       <Accordion title="Your Timeline" contentState={timelineState}>
-        {infiniteTimeline}
+        <InfiniteTimeline />
       </Accordion>
     </div>
   )

@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { TootCard } from '../../ui-elements/toot/toot-card'
+import { TootCard } from '../toot/toot-card'
 import { Status } from 'tracemap-api-types'
 
 interface TimelineProps {
@@ -18,10 +18,9 @@ export function Timeline({ content }: TimelineProps) {
 
 const styles = {
   timelineWrapper: css`
-    margin: 20px auto;
-    padding: 0 20px;
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
     gap: 12px;
   `,
 }

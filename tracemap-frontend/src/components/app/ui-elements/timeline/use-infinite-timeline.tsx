@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { CircularProgress } from '@mui/material'
 import { ReactNode, UIEvent, useState } from 'react'
 import { Status } from 'tracemap-api-types'
-import { Timeline } from '../side-panel/user-view/timeline'
+import { Timeline } from './timeline'
 
 interface InfiniteTimelineProps {
   data: Status[]
@@ -25,23 +25,29 @@ export function useInfiniteTimeline({ data, fetchNextPage }: InfiniteTimelinePro
       setIsFetching(false)
     }
   }
-  const timeline = (
-    <div css={styles.timelineWrapper}>
-      <Timeline content={data} />
-      {isFetching && <CircularProgress css={styles.loadingSpinner} />}
-    </div>
-  )
+
+  const InfiniteTimeline =
+    (data: Status[]) =>
+    ({ children, ...props }: { children?: ReactNode }) =>
+      (
+        <div css={styles.infiniteTimelineWrapper} {...props}>
+          {children}
+          <Timeline content={data} />
+          {isFetching && <CircularProgress css={styles.loadingSpinner} />}
+        </div>
+      )
 
   return {
-    infiniteTimeline: timeline,
+    InfiniteTimeline: InfiniteTimeline(data),
     fetchMorePostsIfOnBottom,
   }
 }
 
 const styles = {
-  timelineWrapper: css`
+  infiniteTimelineWrapper: css`
     display: flex;
     flex-direction: column;
+    justify-content: center;
   `,
   loadingSpinner: css`
     margin-bottom: 25px;

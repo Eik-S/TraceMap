@@ -49,7 +49,6 @@ const styles = {
     font-size: 14px;
     color: ${colorGrayFontLight};
     display: flex;
-    justify-items: center;
 
     img {
       margin-right: 5px;

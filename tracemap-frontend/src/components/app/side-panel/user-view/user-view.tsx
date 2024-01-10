@@ -6,11 +6,11 @@ import { IconButton } from '../../ui-elements/icon-button'
 import { User } from '../../ui-elements/user'
 import { UserInfo } from './user-info'
 import { WordCloud } from './word-cloud'
-import { useInfiniteTimeline } from '../../ui-elements/use-infinite-timeline'
+import { useInfiniteTimeline } from '../../ui-elements/timeline/use-infinite-timeline'
 
 export function UserView({ ...props }) {
   const { userInfo, userTimeline, fetchNextTimelinePage } = useUserInfoContext()
-  const { infiniteTimeline, fetchMorePostsIfOnBottom } = useInfiniteTimeline({
+  const { InfiniteTimeline, fetchMorePostsIfOnBottom } = useInfiniteTimeline({
     data: userTimeline,
     fetchNextPage: fetchNextTimelinePage,
   })
@@ -38,7 +38,7 @@ export function UserView({ ...props }) {
       <div css={scrollContainer} onScroll={fetchMorePostsIfOnBottom}>
         {userInfo && <UserInfo userInfo={userInfo} />}
         <WordCloud />
-        {infiniteTimeline}
+        <InfiniteTimeline css={styles.userTimeline} />
       </div>
     </div>
   )
@@ -91,5 +91,8 @@ const styles = {
     background-color: white;
     box-shadow: 0 0 1px 0 rgba(36, 41, 51, 0.1), 0 2px 2px 0 rgba(15, 19, 26, 0.1),
       0 2px 4px 0 rgba(15, 19, 26, 0.1);
+  `,
+  userTimeline: css`
+    margin: 20px;
   `,
 }

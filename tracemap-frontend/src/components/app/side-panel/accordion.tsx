@@ -89,13 +89,13 @@ const styles = {
     overflow: hidden;
     height: 0px;
     z-index: 2;
-    padding: 0 20px;
     display: flex;
     justify-content: center;
 
     ${isOpen &&
     css`
       height: auto;
+      padding: 20px;
     `}
   `,
 }
