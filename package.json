@@ -19,12 +19,6 @@
     "lint": "npm run lint --workspaces --if-present",
     "prepare": "husky install"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "volta": {
     "node": "20.10.0",
     "npm": "10.2.5"
