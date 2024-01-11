@@ -21,8 +21,8 @@ export function Toot({ status, ...props }: TootProps) {
       <div css={styles.content} dangerouslySetInnerHTML={{ __html: status.content }}></div>
       <div css={styles.date}>
         <span>
-          {date.toLocaleString('default', { month: 'long' })} {date.getDay()}, {date.getFullYear()}{' '}
-          at {date.toLocaleTimeString('en-EN', { timeStyle: 'short' })}
+          {date.toLocaleString('en-EN', { month: 'long' })} {date.getDay() + 1},{' '}
+          {date.getFullYear()} at {date.toLocaleTimeString('en-EN', { timeStyle: 'short' })}
         </span>
       </div>
     </div>

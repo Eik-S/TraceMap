@@ -5,19 +5,26 @@ import { mediaQuery, scrollContainer } from '../../../../styles/utils'
 import { IconButton } from '../../ui-elements/icon-button'
 import { User } from '../../ui-elements/user'
 import { UserInfo } from './user-info'
+import { UserSettings } from './user-settings'
+import { UserTimeline } from './user-timeline'
 import { WordCloud } from './word-cloud/word-cloud'
-import { useInfiniteTimeline } from '../../ui-elements/timeline/use-infinite-timeline'
 
 export function UserView({ ...props }) {
-  const { userInfo, userTimeline, fetchNextTimelinePage } = useUserInfoContext()
-  const { InfiniteTimeline, fetchMorePostsIfOnBottom } = useInfiniteTimeline({
-    data: userTimeline,
-    fetchNextPage: fetchNextTimelinePage,
-  })
+  const { userInfo, userTimeline, fetchNextTimelinePage, isFetchingTimeline } = useUserInfoContext()
   const open = typeof userInfo !== 'undefined'
 
   function closeUserDetails() {
     window.history.back()
+  }
+
+  function fetchMorePostsIfOnBottom(element: HTMLDivElement) {
+    if (isFetchingTimeline) {
+      return
+    }
+    const scrollLeft = element.scrollHeight - (element.scrollTop + element.offsetHeight)
+    if (scrollLeft < 300) {
+      fetchNextTimelinePage()
+    }
   }
 
   return (
@@ -33,12 +40,16 @@ export function UserView({ ...props }) {
       {userInfo && (
         <div css={styles.userBase}>
           <User user={userInfo} />
+          <UserSettings />
         </div>
       )}
-      <div css={scrollContainer} onScroll={fetchMorePostsIfOnBottom}>
+      <div
+        css={scrollContainer}
+        onScroll={(event) => fetchMorePostsIfOnBottom(event.target as HTMLDivElement)}
+      >
         {userInfo && <UserInfo userInfo={userInfo} />}
         <WordCloud timeline={userTimeline} key={userInfo?.id} />
-        <InfiniteTimeline css={styles.userTimeline} />
+        <UserTimeline css={styles.userTimeline} />
       </div>
     </div>
   )
@@ -86,13 +97,20 @@ const styles = {
     line-height: 20px;
   `,
   userBase: css`
-    position: relative;
     padding: 20px 20px 15px;
     background-color: white;
     box-shadow: 0 0 1px 0 rgba(36, 41, 51, 0.1), 0 2px 2px 0 rgba(15, 19, 26, 0.1),
       0 2px 4px 0 rgba(15, 19, 26, 0.1);
+    z-index: 1;
+
+    display: grid;
+    grid-template-columns: 1fr 40px;
   `,
   userTimeline: css`
     margin: 20px;
+  `,
+  loadingSpinner: css`
+    margin-bottom: 25px;
+    align-self: center;
   `,
 }

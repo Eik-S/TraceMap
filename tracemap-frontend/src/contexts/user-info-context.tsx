@@ -16,12 +16,13 @@ function useUserInfo() {
   const { rebloggedByUsers, statusServer } = useStatusInfoContext()
   const { getUserTimeline } = useMastoClientApi()
   const { username } = useParams()
-  const userData = rebloggedByUsers.find((user) => user.acct === username)
+  const userData = username ? rebloggedByUsers.find((user) => user.acct === username) : undefined
 
   const {
     data: getTimelineResponse,
     fetchNextPage: fetchNextTimelinePage,
     hasNextPage: hasNextTimelinePage,
+    isFetching: isFetchingTimeline,
   } = useInfiniteQuery({
     queryKey: ['userTimeline', userData?.id],
     enabled: typeof userData !== 'undefined',
@@ -37,6 +38,7 @@ function useUserInfo() {
     userInfo: userData,
     userTimeline,
     hasNextTimelinePage: typeof hasNextTimelinePage === 'undefined' ? true : hasNextTimelinePage,
+    isFetchingTimeline,
     fetchNextTimelinePage,
   }
 }

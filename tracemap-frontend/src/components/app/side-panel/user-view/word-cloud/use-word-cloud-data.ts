@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Status } from 'tracemap-api-types'
 import wc from 'wordcloud'
 import { colorGrayFontDark, darkPurple } from '../../../../../styles/colors'
+import { useAppSettingsContext } from '../../../../../contexts/app-settings-context'
+import { filterBoosts } from '../../../../../utils/timeline-utils'
 
 const cloudColors = {
   handles: '#626570',
@@ -10,6 +12,8 @@ const cloudColors = {
 }
 
 export function useWordCloudData(timeline: Status[]) {
+  const { showBoosts } = useAppSettingsContext()
+  const filteredTimeline = showBoosts ? timeline : filterBoosts(timeline)
   const [lastTimelineLength, setLastTimelineLength] = useState(0)
   const [wordList, setWordList] = useState<Word[]>([])
   const wordListWeightFactor = wordList[0]
@@ -17,11 +21,12 @@ export function useWordCloudData(timeline: Status[]) {
     : 1
 
   useEffect(() => {
-    if (lastTimelineLength === timeline.length) {
+    // this useEffect is expensive and should not run unnecessarily
+    if (lastTimelineLength === filteredTimeline.length) {
       return
     }
 
-    const newTimelineContent = timeline.slice(lastTimelineLength)
+    const newTimelineContent = filteredTimeline.slice(lastTimelineLength)
     const text = newTimelineContent
       .map((status) => getTextFromStatusContent(status.reblog?.content || status.content))
       .join(' ')
@@ -29,12 +34,12 @@ export function useWordCloudData(timeline: Status[]) {
     getWordListFromText(text).then((newWords) => {
       setWordList((prev) => mergeWordLists(prev, newWords))
 
-      setLastTimelineLength(timeline.length)
+      setLastTimelineLength(filteredTimeline.length)
     })
 
     // cannot exhaust because this useEffect reads and sets lastTimelineLength
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeline])
+  }, [filteredTimeline])
 
   const dpr = window.devicePixelRatio || 1
   const wordcloudOptions: wc.Options = {

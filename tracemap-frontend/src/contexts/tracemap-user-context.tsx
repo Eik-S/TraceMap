@@ -12,6 +12,7 @@ function useTracemapUser() {
     data: getTimelineResponse,
     fetchNextPage: fetchNextTimelinePage,
     hasNextPage: hasNextTimelinePage,
+    isFetching: isFetchingTimeline,
   } = useInfiniteQuery({
     queryKey: ['homeTimeline', server],
     enabled: server !== '',
@@ -26,6 +27,7 @@ function useTracemapUser() {
   return {
     homeTimeline,
     hasNextTimelinePage,
+    isFetchingTimeline,
     fetchNextTimelinePage,
   }
 }

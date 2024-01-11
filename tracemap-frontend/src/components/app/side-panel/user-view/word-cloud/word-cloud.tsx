@@ -4,6 +4,7 @@ import wc from 'wordcloud'
 import { colorHeader } from '../../../../../styles/colors'
 import { useWordCloudData } from './use-word-cloud-data'
 import { Status } from 'tracemap-api-types'
+import { useAppSettingsContext } from '../../../../../contexts/app-settings-context'
 
 interface WordCloudProps {
   timeline: Status[]
@@ -12,6 +13,7 @@ interface WordCloudProps {
 export function WordCloud({ timeline, ...props }: WordCloudProps) {
   const canvas = document.getElementById('wordcloud-canvas') as HTMLCanvasElement | null
   const { wordcloudOptions, statusCount } = useWordCloudData(timeline)
+  const { showBoosts } = useAppSettingsContext()
 
   useEffect(() => {
     if (canvas === null) {
@@ -27,7 +29,9 @@ export function WordCloud({ timeline, ...props }: WordCloudProps) {
 
   return (
     <div css={styles.wordcloudWrapper} {...props}>
-      <h2 css={styles.headline}>Semantic cloud of the users last {statusCount} posts and boosts</h2>
+      <h2 css={styles.headline}>
+        Semantic cloud of last {statusCount} posts {showBoosts && 'and boosts'}
+      </h2>
       <canvas id="wordcloud-canvas" css={styles.wordcloudCanvas} />
     </div>
   )

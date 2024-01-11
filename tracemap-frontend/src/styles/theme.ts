@@ -22,4 +22,22 @@ export const theme = createTheme({
     warning: red,
     secondary: pink,
   },
+  components: {
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          height: '22px',
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          height: '22px',
+        },
+      },
+    },
+  },
 })
