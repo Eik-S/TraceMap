@@ -5,7 +5,7 @@ import { mediaQuery, scrollContainer } from '../../../../styles/utils'
 import { IconButton } from '../../ui-elements/icon-button'
 import { User } from '../../ui-elements/user'
 import { UserInfo } from './user-info'
-import { WordCloud } from './word-cloud'
+import { WordCloud } from './word-cloud/word-cloud'
 import { useInfiniteTimeline } from '../../ui-elements/timeline/use-infinite-timeline'
 
 export function UserView({ ...props }) {
@@ -37,7 +37,7 @@ export function UserView({ ...props }) {
       )}
       <div css={scrollContainer} onScroll={fetchMorePostsIfOnBottom}>
         {userInfo && <UserInfo userInfo={userInfo} />}
-        <WordCloud />
+        <WordCloud timeline={userTimeline} key={userInfo?.id} />
         <InfiniteTimeline css={styles.userTimeline} />
       </div>
     </div>
