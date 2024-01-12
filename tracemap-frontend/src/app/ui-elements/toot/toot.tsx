@@ -1,4 +1,5 @@
 import { css } from '@emotion/react'
+import { Status } from 'tracemap-api-types'
 import {
   colorGrayFontAccent,
   colorGrayFontLight,
@@ -6,7 +7,6 @@ import {
   lightPurple,
 } from '../../../styles/colors'
 import { User } from '../user'
-import { Status } from 'tracemap-api-types'
 
 interface TootProps {
   status: Status
@@ -19,11 +19,29 @@ export function Toot({ status, ...props }: TootProps) {
     <div css={styles.statusWrapper} {...props}>
       <User user={status.account} />
       <div css={styles.content} dangerouslySetInnerHTML={{ __html: status.content }}></div>
-      <div css={styles.date}>
+      <div css={styles.dateLine}>
         <span>
           {date.toLocaleString('en-EN', { month: 'long' })} {date.getDate()}, {date.getFullYear()}{' '}
           at {date.toLocaleTimeString('en-EN', { timeStyle: 'short' })}
         </span>
+        <span>•</span>
+        <a
+          css={styles.statusLink}
+          href={status.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="open status on mastodon"
+        >
+          <img
+            alt=""
+            srcSet="
+              /icons/globe-gray_64.png 4x,
+              /icons/globe-gray_32.png 2x,
+              /icons/globe-gray_16.png 1x"
+            src="/icons/globe-gray_16.png"
+          />
+          mastodon
+        </a>
       </div>
     </div>
   )
@@ -69,10 +87,25 @@ const styles = {
       }
     }
   `,
-  date: css`
+  dateLine: css`
     color: ${colorGrayFontLight};
     font-size: 14px;
     display: flex;
     justify-content: space-between;
+  `,
+  statusLink: css`
+    color: inherit;
+    text-decoration: none;
+
+    img {
+      display: inline-block;
+      height: 13px;
+      margin-right: 4px;
+      margin-bottom: -2px;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
   `,
 }

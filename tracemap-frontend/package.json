@@ -2,6 +2,7 @@
   "name": "tracemap-frontend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -18,16 +19,16 @@
     "wordcloud": "^1.2.2"
   },
   "devDependencies": {
+    "@emotion/babel-preset-css-prop": "^11.10.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
     "@types/wordcloud": "^1.2.2",
-    "typescript": "5.3.3",
-    "@emotion/babel-preset-css-prop": "^11.10.0",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.56.0",
     "eslint-config-react-app": "^7.0.1",
+    "typescript": "5.3.3",
     "vite": "^5.0.11",
     "vite-plugin-eslint": "^1.8.1"
   },

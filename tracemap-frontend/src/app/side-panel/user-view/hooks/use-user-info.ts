@@ -1,8 +1,8 @@
-import { useParams } from 'react-router-dom'
-import { useStatusInfoContext } from '../../../../contexts/status-info-context'
-import { useMastoClientApi } from '../../../../apis/useMastoClientApi'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { useParams } from 'react-router-dom'
 import { UserTimelineBatch } from 'tracemap-api-types'
+import { useMastoClientApi } from '../../../../apis/useMastoClientApi'
+import { useStatusInfoContext } from '../../../../contexts/status-info-context'
 
 export function useUserInfo() {
   const { username } = useParams()
@@ -11,7 +11,7 @@ export function useUserInfo() {
   const userData = username ? rebloggedByUsers.find((user) => user.acct === username) : undefined
 
   const {
-    data: getTimelineResponse,
+    data: timelineResponses,
     fetchNextPage: fetchNextTimelinePage,
     hasNextPage: hasNextTimelinePage,
     isFetching: isFetchingTimeline,
@@ -24,7 +24,7 @@ export function useUserInfo() {
     },
   })
 
-  const userTimeline = getTimelineResponse?.pages.flatMap((page) => page.data) ?? []
+  const userTimeline = timelineResponses?.pages.flatMap((page) => page.data) ?? []
 
   return {
     userInfo: userData,

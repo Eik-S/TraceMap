@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
-import { colorParagraph, darkPurple, colorGrayPlaceholder } from '../../../styles/colors'
+import { colorGrayPlaceholder, darkPurple } from '../../../styles/colors'
+import { BoostCounter } from './boost-counter'
 
 interface TootInfoProps {
   id: string
@@ -14,16 +15,7 @@ export function TootInfo({ id, server, reblogsCount }: TootInfoProps) {
 
   return (
     <div css={styles.statusInfo}>
-      <img
-        css={styles.shareIcon}
-        alt=""
-        srcSet="
-              /icons/share_64.png 4x,
-              /icons/share_32.png 2x,
-              /icons/share_16.png 1x"
-        src="/icons/share_16.png"
-      />
-      <span css={styles.shareCounter}>{reblogsCount}</span>
+      <BoostCounter numberOfBoosts={reblogsCount} />
       <button css={styles.purpleButton} onClick={() => openStatusOnTraceMap()}>
         Show Tracemap
         <div css={styles.circle} />
@@ -36,19 +28,8 @@ const styles = {
   statusInfo: css`
     display: grid;
     margin: 8px 0 12px 12px;
-    grid-template-columns: 16px auto 1fr;
+    grid-template-columns: auto 1fr;
     align-items: center;
-  `,
-  shareIcon: css`
-    width: 16px;
-    padding-top: 1px;
-  `,
-  shareCounter: css`
-    font-size: 14px;
-    margin-left: 10px;
-    color: ${colorParagraph};
-    font-weight: 600;
-    line-height: 11px;
   `,
   purpleButton: css`
     cursor: pointer;

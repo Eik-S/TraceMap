@@ -8,7 +8,9 @@ export interface UserProps {
 }
 
 export function User({ user, ...props }: UserProps) {
-  const { avatar, url, display_name, acct } = user
+  const { avatar, url, display_name, acct, username } = user
+
+  const name = display_name !== '' ? display_name : username
 
   return (
     <a
@@ -21,7 +23,7 @@ export function User({ user, ...props }: UserProps) {
     >
       <img css={styles.image} alt="" src={avatar} />
       <h3 css={styles.name}>
-        <TextWithCustomEmojis emojis={user.emojis} input={display_name} />
+        <TextWithCustomEmojis emojis={user.emojis} input={name} />
       </h3>
       <span css={styles.screenName}>@{acct}</span>
     </a>
