@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useMastoClientApi } from '../services/useMastoClientApi'
-import { useTracemapMastoApi } from '../services/useTracemapMastoApi'
+import { useMastoClientApi } from '../apis/useMastoClientApi'
+import { useTracemapMastoApi } from '../apis/useTracemapMastoApi'
 
 function useStatusInfo() {
   const { status } = useParams()

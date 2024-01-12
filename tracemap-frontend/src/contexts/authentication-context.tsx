@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext, useMemo } from 'react'
-import { useTracemapMastoApi } from '../services/useTracemapMastoApi'
+import { useTracemapMastoApi } from '../apis/useTracemapMastoApi'
 import { UserData } from 'tracemap-api-types'
 import { useLocalStorage } from '../utils/use-local-storage'
 

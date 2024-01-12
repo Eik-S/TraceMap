@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactNode, createContext, useContext } from 'react'
-import { useTracemapMastoApi } from '../services/useTracemapMastoApi'
+import { useTracemapMastoApi } from '../apis/useTracemapMastoApi'
 import { UserTimelineBatch } from 'tracemap-api-types'
 import { useLocalStorage } from '../utils/use-local-storage'
 
