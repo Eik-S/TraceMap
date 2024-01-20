@@ -7,15 +7,21 @@ export function MainPanel({ ...props }) {
   const { totalFollowers, totalFollowing } = useStatusInfoContext()
   // Calculated by default rate limits of mastodon API:
   //    80 followers/followees per request, 300 request per 5 minutes
-  const apiRequests = Math.ceil(totalFollowers / 80)
-  const timeEstimated = Math.ceil((apiRequests / 300) * 5)
+  const apiRequestsFollowers = Math.ceil(totalFollowers / 80)
+  const apiRequestsFollowing = Math.ceil(totalFollowing / 80)
+  const timeEstimatedFollowers = Math.floor(apiRequestsFollowers / 300) * 5
+  const timeEstimatedFollowing = Math.floor(apiRequestsFollowing / 300) * 5
 
   return (
     <div css={styles.wrapper} {...props}>
       <div css={styles.infoBox}>
         <div css={styles.labelBox}>
-          <label htmlFor="generation-time-estimation">time estimated</label>
-          <span id="generation-time-estimation">{timeEstimated} min</span>
+          <label htmlFor="generation-time-estimation">time estimated (followers)</label>
+          <span id="generation-time-estimation">{timeEstimatedFollowers} min</span>
+        </div>
+        <div css={styles.labelBox}>
+          <label htmlFor="generation-time-estimation">time estimated (following)</label>
+          <span id="generation-time-estimation">{timeEstimatedFollowing} min</span>
         </div>
         <div css={styles.labelBox}>
           <label htmlFor="total-followers">total followers</label>
@@ -27,7 +33,11 @@ export function MainPanel({ ...props }) {
         </div>
         <div css={styles.labelBox}>
           <label htmlFor="api-requests">requests (followers)</label>
-          <span id="api-requests">{apiRequests}</span>
+          <span id="api-requests">{apiRequestsFollowers}</span>
+        </div>
+        <div css={styles.labelBox}>
+          <label htmlFor="api-requests">requests (following)</label>
+          <span id="api-requests">{apiRequestsFollowing}</span>
         </div>
       </div>
       <button css={styles.generateTracemapButton}>generate TraceMap</button>
@@ -47,9 +57,9 @@ const styles = {
   infoBox: css`
     background-color: white;
     padding: 24px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-auto-rows: auto;
     justify-content: center;
     gap: 24px;
   `,

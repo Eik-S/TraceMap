@@ -32,20 +32,24 @@ function useStatusInfo() {
   })
 
   useEffect(() => {
-    if (typeof rebloggedByUsers === 'undefined') {
+    if (typeof rebloggedByUsers === 'undefined' || typeof statusInfo === 'undefined') {
       return
     }
-    setTotalFollowers(
+
+    const rebloggersFollowers =
       rebloggedByUsers
         ?.map((user) => user.followers_count)
-        .reduce((sum, curr) => (sum += curr), 0) || 0,
-    )
-    setTotalFollowing(
+        .reduce((sum, curr) => (sum += curr), 0) || 0
+    const sourceFollowers = statusInfo.account.followers_count
+    setTotalFollowers(rebloggersFollowers + sourceFollowers)
+
+    const rebloggersFollowing =
       rebloggedByUsers
         ?.map((user) => user.following_count)
-        .reduce((sum, curr) => (sum += curr), 0) || 0,
-    )
-  }, [rebloggedByUsers])
+        .reduce((sum, curr) => (sum += curr), 0) || 0
+    const sourceFollowing = statusInfo.account.following_count
+    setTotalFollowing(rebloggersFollowing + sourceFollowing)
+  }, [rebloggedByUsers, statusInfo])
 
   return {
     statusInfo,
