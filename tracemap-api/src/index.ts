@@ -11,9 +11,8 @@ import { getAccessTokenController } from './controllers/oauth/get-access-token-c
 import { verifyAccessTokenController } from './controllers/oauth/verify-access-token-controller'
 import { rebloggedByController } from './controllers/masto/reblogged-by-controller'
 import { homeTimelineController } from './controllers/masto/home-timeline-controller'
-import { neo4jServerInfoController } from './controllers/neo4j/neo4j-server-info-controller'
-import { actorByNameController } from './controllers/neo4j/actor-by-name-controller'
 import { requestCrawlingController } from './controllers/crawling/request-crawling-controller'
+import { getUserRelationsController } from './controllers/neo4j/get-user-relations-controller'
 
 if (isLocalDevelopment) {
   dotenv.config()
@@ -35,10 +34,8 @@ router.get('/masto/verify-access-token', verifyAccessTokenController)
 router.get('/masto/reblogged-by', rebloggedByController)
 router.get('/masto/timelines/home', homeTimelineController)
 
-router.get('/neo4j/server-info', neo4jServerInfoController)
-router.get('/neo4j/actor-by-name', actorByNameController)
-
 router.post('/tracemap/request-crawling', requestCrawlingController)
+router.post('/tracemap/get-user-relations', getUserRelationsController)
 
 if (isLocalDevelopment === false) {
   server.use(errorResponseMiddleware)

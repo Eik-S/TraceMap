@@ -7,7 +7,7 @@ import { isDev } from '../../utils/config'
 
 export function MainPanel({ ...props }) {
   const { totalFollowers, totalFollowing, accountHandles } = useStatusInfoContext()
-  const { sendCrawlRequest } = useTracemapApi()
+  const { sendCrawlRequest, requestUserRelations } = useTracemapApi()
   // Calculated by default rate limits of mastodon API:
   //    80 followers/followees per request, 300 request per 5 minutes
   const apiRequestsFollowers = Math.ceil(totalFollowers / 80)
@@ -15,17 +15,23 @@ export function MainPanel({ ...props }) {
   const timeEstimatedFollowers = Math.floor(apiRequestsFollowers / 300) * 5
   const timeEstimatedFollowing = Math.floor(apiRequestsFollowing / 300) * 5
 
-  const crawlingDisabled = typeof accountHandles === 'undefined' || isDev === false
+  const tracemapApiDisabled = typeof accountHandles === 'undefined' || isDev === false
 
   function requestTracemapCrawling() {
-    if (
-      typeof accountHandles === 'undefined' ||
-      document.location.origin !== 'http://localhost:3000'
-    ) {
+    if (tracemapApiDisabled) {
       return
     }
 
     sendCrawlRequest(accountHandles)
+  }
+
+  async function getUserRelations() {
+    if (tracemapApiDisabled) {
+      return
+    }
+
+    const relations = await requestUserRelations(accountHandles)
+    console.log(relations)
   }
 
   return (
@@ -59,9 +65,12 @@ export function MainPanel({ ...props }) {
       <button
         css={styles.generateTracemapButton}
         onClick={() => requestTracemapCrawling()}
-        disabled={crawlingDisabled}
+        disabled={tracemapApiDisabled}
       >
         generate TraceMap
+      </button>
+      <button css={mainButton} onClick={() => getUserRelations()} disabled={tracemapApiDisabled}>
+        get TraceMap data
       </button>
     </div>
   )

@@ -1,3 +1,4 @@
+import { Relations } from 'tracemap-api-types'
 import { apiUrl } from '../utils/config'
 
 export function useTracemapApi() {
@@ -7,7 +8,7 @@ export function useTracemapApi() {
 
   async function sendCrawlRequest(handles: string[]): Promise<void> {
     if (accessToken === null) {
-      throw new Error('accessToken has to be set to use tracemap masto api')
+      throw new Error('accessToken has to be set to use sendCrawlRequest()')
     }
 
     const requestHeaders = new Headers()
@@ -21,8 +22,22 @@ export function useTracemapApi() {
     }))
   }
 
+  async function requestUserRelations(handles: string[]): Promise<Relations> {
+    const requestHeaders = new Headers()
+    requestHeaders.append('Content-Type', 'application/json')
+
+    const response = await fetch(`${apiUrl}/tracemap/get-user-relations`, {
+      headers: requestHeaders,
+      method: 'POST',
+      body: JSON.stringify({ handles }),
+    })
+
+    return await response.json()
+  }
+
   return {
     isUsable,
     sendCrawlRequest,
+    requestUserRelations,
   }
 }

@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { colorGrayFontDark, darkPurple, lightPurple } from './colors'
+import { colorGrayFontDark, colorGrayPlaceholder, darkPurple, lightPurple } from './colors'
 
 export const mainButton = css`
   border: 8px solid #fff;
@@ -16,8 +16,9 @@ export const mainButton = css`
 
   &:disabled {
     background-image: none;
-    border-color: lightgray;
-    color: lightgray;
+    background-color: transparent;
+    border-color: ${colorGrayPlaceholder};
+    color: ${colorGrayPlaceholder};
   }
 `
 

@@ -5,7 +5,7 @@ import { lookupUserID } from '../mastodon-api/user-lookup'
 import { deleteFolloweesOfUser, writeFolloweesOfUser } from '../neo4j-api/followees'
 import { getLastCrawledTimestampOfUser } from '../neo4j-api/user-info'
 
-const oneDayInMillis = 1000 * 60 * 24
+const oneDayInMillis = 1000 * 60 * 60 * 24
 
 export interface CrawlUserDataProps {
   acct: string
