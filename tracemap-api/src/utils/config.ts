@@ -7,3 +7,5 @@ export const frontendBaseUri = isLocalDevelopment
 export const oauthRedirectUri = isLocalDevelopment
   ? 'http://localhost:3000/login/callback'
   : 'https://tracemap.eikemu.com/login/callback'
+
+export const crawlerDevServerUri = isLocalDevelopment ? 'http://localhost:3031' : undefined

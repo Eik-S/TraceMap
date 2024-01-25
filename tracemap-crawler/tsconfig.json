@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["esnext"],
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitThis": true,
+    "sourceMap": true,
+    "target": "esnext",
+    "outDir": "./lib",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./lib/buildcache",
+    "skipLibCheck": true,
+    "noEmit": true
+  }
+}

@@ -9,7 +9,7 @@ interface GetRebloggedByUsersParams {
   accessToken: string
 }
 
-interface BatchResponse<T> {
+interface MastodonBatchResponse<T> {
   nextUrl?: string
   data: T[]
 }
@@ -22,7 +22,7 @@ export async function getRebloggedByUsers({
   const responseLimit = 80
   const url = `https://${server}/api/v1/statuses/${statusID}/reblogged_by?limit=${responseLimit}`
 
-  const batchResponses: BatchResponse<UserData>[] = []
+  const batchResponses: MastodonBatchResponse<UserData>[] = []
   const response = await getBatchOfRebloggedByUsers(url, accessToken)
   batchResponses.push(response!)
 
@@ -40,7 +40,7 @@ export async function getRebloggedByUsers({
 async function getBatchOfRebloggedByUsers(
   url: string,
   accessToken: string,
-): Promise<BatchResponse<UserData> | undefined> {
+): Promise<MastodonBatchResponse<UserData> | undefined> {
   try {
     const response = await axios.get<UserData[] | MastoErrorResponse>(url, {
       headers: { Authorization: `Bearer ${accessToken}` },

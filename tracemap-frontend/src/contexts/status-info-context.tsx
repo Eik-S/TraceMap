@@ -11,6 +11,7 @@ function useStatusInfo() {
   const { getRebloggedByUsers } = useTracemapMastoApi()
   const [totalFollowing, setTotalFollowing] = useState(0)
   const [totalFollowers, setTotalFollowers] = useState(0)
+  const [accountHandles, setAccountHandles] = useState<string[] | undefined>(undefined)
 
   const { data: rebloggedByUsers } = useQuery({
     queryKey: ['statusRebloggedBy', statusID],
@@ -31,6 +32,30 @@ function useStatusInfo() {
     },
   })
 
+  // set accountHandles of all users to crawl on tracemap creation
+  // format <username>@<server>
+  useEffect(() => {
+    if (
+      typeof rebloggedByUsers === 'undefined' ||
+      typeof statusInfo === 'undefined' ||
+      typeof statusServer === 'undefined'
+    ) {
+      return
+    }
+    const rebloggedByHandles = rebloggedByUsers.map((user) => {
+      const acct = user.acct
+      if (acct.split('@').length === 2) {
+        return acct
+      }
+      const statusServer = new URL(statusInfo.url).hostname
+      return `${acct}@${statusServer}`
+    })
+    const statusCreatorHandle = `${statusInfo.account.username}@${statusServer}`
+    setAccountHandles([statusCreatorHandle, ...rebloggedByHandles])
+    console.log(rebloggedByHandles)
+  }, [rebloggedByUsers, statusInfo, statusServer])
+
+  // set metrics for approximate crawling duration
   useEffect(() => {
     if (typeof rebloggedByUsers === 'undefined' || typeof statusInfo === 'undefined') {
       return
@@ -57,6 +82,7 @@ function useStatusInfo() {
     rebloggedByUsers: rebloggedByUsers || [],
     totalFollowing,
     totalFollowers,
+    accountHandles,
   }
 }
 

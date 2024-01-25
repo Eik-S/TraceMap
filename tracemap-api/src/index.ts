@@ -11,6 +11,9 @@ import { getAccessTokenController } from './controllers/oauth/get-access-token-c
 import { verifyAccessTokenController } from './controllers/oauth/verify-access-token-controller'
 import { rebloggedByController } from './controllers/masto/reblogged-by-controller'
 import { homeTimelineController } from './controllers/masto/home-timeline-controller'
+import { neo4jServerInfoController } from './controllers/neo4j/neo4j-server-info-controller'
+import { actorByNameController } from './controllers/neo4j/actor-by-name-controller'
+import { requestCrawlingController } from './controllers/crawling/request-crawling-controller'
 
 if (isLocalDevelopment) {
   dotenv.config()
@@ -32,6 +35,11 @@ router.get('/masto/verify-access-token', verifyAccessTokenController)
 router.get('/masto/reblogged-by', rebloggedByController)
 router.get('/masto/timelines/home', homeTimelineController)
 
+router.get('/neo4j/server-info', neo4jServerInfoController)
+router.get('/neo4j/actor-by-name', actorByNameController)
+
+router.post('/tracemap/request-crawling', requestCrawlingController)
+
 if (isLocalDevelopment === false) {
   server.use(errorResponseMiddleware)
 }
@@ -39,7 +47,7 @@ server.use(cors())
 server.use(bodyParser())
 server.use(router.routes())
 
-console.log(`\n\n>\t Koa Server running on http://localhost:${PORT}`)
+console.log(`\n\n>\t TraceMap API running on http://localhost:${PORT}`)
 
 // local dev server
 if (isLocalDevelopment) {

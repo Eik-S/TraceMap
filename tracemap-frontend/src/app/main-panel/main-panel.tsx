@@ -1,16 +1,32 @@
 import { css } from '@emotion/react'
+import { useTracemapApi } from '../../apis/useTracemapApi'
 import { useStatusInfoContext } from '../../contexts/status-info-context'
 import { mainButton } from '../../styles/buttons'
 import { colorGrayFontBlackish, colorGrayFontLight, lightPurple } from '../../styles/colors'
+import { isDev } from '../../utils/config'
 
 export function MainPanel({ ...props }) {
-  const { totalFollowers, totalFollowing } = useStatusInfoContext()
+  const { totalFollowers, totalFollowing, accountHandles } = useStatusInfoContext()
+  const { sendCrawlRequest } = useTracemapApi()
   // Calculated by default rate limits of mastodon API:
   //    80 followers/followees per request, 300 request per 5 minutes
   const apiRequestsFollowers = Math.ceil(totalFollowers / 80)
   const apiRequestsFollowing = Math.ceil(totalFollowing / 80)
   const timeEstimatedFollowers = Math.floor(apiRequestsFollowers / 300) * 5
   const timeEstimatedFollowing = Math.floor(apiRequestsFollowing / 300) * 5
+
+  const crawlingDisabled = typeof accountHandles === 'undefined' || isDev === false
+
+  function requestTracemapCrawling() {
+    if (
+      typeof accountHandles === 'undefined' ||
+      document.location.origin !== 'http://localhost:3000'
+    ) {
+      return
+    }
+
+    sendCrawlRequest(accountHandles)
+  }
 
   return (
     <div css={styles.wrapper} {...props}>
@@ -40,7 +56,13 @@ export function MainPanel({ ...props }) {
           <span id="api-requests">{apiRequestsFollowing}</span>
         </div>
       </div>
-      <button css={styles.generateTracemapButton}>generate TraceMap</button>
+      <button
+        css={styles.generateTracemapButton}
+        onClick={() => requestTracemapCrawling()}
+        disabled={crawlingDisabled}
+      >
+        generate TraceMap
+      </button>
     </div>
   )
 }

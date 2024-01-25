@@ -5,7 +5,8 @@
   "workspaces": [
     "tracemap-frontend",
     "tracemap-api",
-    "tracemap-api-types"
+    "tracemap-api-types",
+    "tracemap-crawler"
   ],
   "devDependencies": {
     "concurrently": "^7.6.0",
@@ -13,7 +14,8 @@
     "prettier": "2.8.3"
   },
   "scripts": {
-    "start": "aws-vault exec private -- concurrently --kill-others \"npm run start --workspace tracemap-frontend\" \"npm run start --workspace tracemap-api\"",
+    "start": "aws-vault exec private -- concurrently --kill-others \"npm run start --workspace tracemap-frontend\" \"npm run start --workspace tracemap-api\" \"npm run start --workspace tracemap-crawler\"",
+    "test": "npm run test --workspaces --if-present",
     "tsc": "npm run tsc --workspaces",
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",

@@ -4,12 +4,10 @@
   "private": true,
   "description": "Koa Server serving the api for tracemap",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=development ts-node ./src/index.ts",
     "prebuild": "rm -rf dist",
     "build": "npx esbuild ./src/index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=./dist/index.js",
     "postbuild": "cd dist && zip -r index.zip index.js",
-    "update-lambda": "aws lambda update-function-code --function-name tracemap-api --zip-file fileb://dist/index.zip",
     "tsc": "tsc"
   },
   "devDependencies": {
@@ -31,6 +29,7 @@
     "koa": "2.15.0",
     "koa-bodyparser": "4.4.1",
     "masto": "6.5.2",
+    "neo4j-driver": "^5.16.0",
     "serverless-http": "3.2.0",
     "tracemap-api-types": "^0.1.0",
     "ts-node": "10.9.2"

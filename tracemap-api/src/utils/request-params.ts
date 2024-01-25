@@ -52,3 +52,35 @@ export function getAccessTokenHeader(ctx: Context): string {
 
   return (accessTokenHeader instanceof Array ? accessTokenHeader[0] : accessTokenHeader) as string
 }
+
+export function getFullySpecifiedUserHandles(ctx: Context): string[] {
+  const body = ctx.request.body
+  const isObject = body instanceof Object
+  const hasHandlesProperty = isObject && 'handles' in body
+  if (hasHandlesProperty === false) {
+    ctx.status = 400
+    ctx.message = 'request body object must provide handles property'
+    return []
+  }
+
+  const handles = body.handles
+  if (isStringArray(handles) === false) {
+    ctx.status = 400
+    ctx.message = 'handles have to be of type string[]'
+    return []
+  }
+
+  handles.forEach((handle) => {
+    if (handle.indexOf('@') === -1) {
+      ctx.status = 400
+      ctx.message = 'all handles must be in format <username>@<server>'
+    }
+  })
+
+  return handles as string[]
+}
+
+function isStringArray(input: any): input is string[] {
+  const isArray = Array.isArray(input)
+  return isArray && typeof input.find((val) => typeof val !== 'string') === 'undefined'
+}
