@@ -53,7 +53,7 @@ export function getAccessTokenHeader(ctx: Context): string {
   return (accessTokenHeader instanceof Array ? accessTokenHeader[0] : accessTokenHeader) as string
 }
 
-export function getFullySpecifiedUserHandles(ctx: Context): string[] {
+export function getHandlesFromRequestBody(ctx: Context): string[] {
   const body = ctx.request.body
   const isObject = body instanceof Object
   const hasHandlesProperty = isObject && 'handles' in body

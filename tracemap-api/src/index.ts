@@ -13,6 +13,7 @@ import { rebloggedByController } from './controllers/masto/reblogged-by-controll
 import { homeTimelineController } from './controllers/masto/home-timeline-controller'
 import { requestCrawlingController } from './controllers/crawling/request-crawling-controller'
 import { getUserRelationsController } from './controllers/neo4j/get-user-relations-controller'
+import { getCrawlStatusController } from './controllers/neo4j/get-crawl-status-controller'
 
 if (isLocalDevelopment) {
   dotenv.config()
@@ -36,6 +37,7 @@ router.get('/masto/timelines/home', homeTimelineController)
 
 router.post('/tracemap/request-crawling', requestCrawlingController)
 router.post('/tracemap/get-user-relations', getUserRelationsController)
+router.post('/tracemap/get-crawl-status', getCrawlStatusController)
 
 if (isLocalDevelopment === false) {
   server.use(errorResponseMiddleware)

@@ -22,13 +22,12 @@ export async function writeFolloweesOfUser(
 ): Promise<ReturnType<QueryStatistics['updates']>> {
   const { summary } = await db.executeQuery(
     `MERGE (sourceUser:User {acct: $sourceAcct})
-     WITH $followeeAccts as followees, sourceUser
-     UNWIND followees as followeeAcct
-        MERGE (followee:User {acct: followeeAcct})
-        CREATE (sourceUser)-[:FOLLOWS]->(followee)
-     WITH distinct sourceUser
-     SET sourceUser.crawled_at = timestamp()
-     
+    SET sourceUser.crawled_at = timestamp()
+    WITH $followeeAccts as followees, sourceUser
+    UNWIND followees as followeeAcct
+      MERGE (followee:User {acct: followeeAcct})
+      CREATE (sourceUser)-[:FOLLOWS]->(followee)
+        
     `,
     {
       sourceAcct,

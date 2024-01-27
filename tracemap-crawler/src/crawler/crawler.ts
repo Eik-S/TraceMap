@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { makeMillisHumanReadable } from '../../utils/format-time'
 import { Measure } from '../../utils/measure'
 import { requestFollowing } from '../mastodon-api/request-following'
@@ -48,23 +49,28 @@ export async function crawlUserData(
         neo4jWriteMillis: 0,
       }
     }
+    const followees: string[] = []
 
-    // lookup userID on home instance
-    const userID = await lookupUserID(sourceAcct)
-    if (typeof userID === 'undefined') {
-      return {
-        type: 'errorResult',
-        message: `could not lookup user ${sourceAcct}`,
+    const mastodonMeasure = new Measure()
+    try {
+      // lookup userID on home instance
+      const userID = await lookupUserID(sourceAcct)
+      if (typeof userID === 'undefined') {
+        throw new Error(`could not lookup user ${sourceAcct}`)
+      }
+
+      // get followees from mastodon
+      const mastodonFolloweeHandles = await getUserFollowees({
+        server: parseServerFromAcctHandle(sourceAcct),
+        userID,
+        accessToken,
+      })
+      followees.push(...mastodonFolloweeHandles)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message)
       }
     }
-
-    // get followees from mastodon
-    const mastodonMeasure = new Measure()
-    const followees = await getUserFollowees({
-      server: parseServerFromAcctHandle(sourceAcct),
-      userID,
-      accessToken,
-    })
     const mastodonRequestTime = mastodonMeasure.stop()
 
     // update neo4j relations

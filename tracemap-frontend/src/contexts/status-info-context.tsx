@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useMastoClientApi } from '../apis/useMastoClientApi'
 import { useTracemapMastoApi } from '../apis/useTracemapMastoApi'
@@ -32,6 +32,21 @@ function useStatusInfo() {
     },
   })
 
+  const buildHandle = useCallback(
+    (acct: string): string => {
+      if (typeof statusInfo === 'undefined') {
+        throw Error('cannot build full handle without a status to get server from')
+      }
+
+      if (acct.split('@').length === 2) {
+        return acct
+      }
+      const statusServer = new URL(statusInfo.url).hostname
+      return `${acct}@${statusServer}`
+    },
+    [statusInfo],
+  )
+
   // set accountHandles of all users to crawl on tracemap creation
   // format <username>@<server>
   useEffect(() => {
@@ -44,16 +59,11 @@ function useStatusInfo() {
     }
     const rebloggedByHandles = rebloggedByUsers.map((user) => {
       const acct = user.acct
-      if (acct.split('@').length === 2) {
-        return acct
-      }
-      const statusServer = new URL(statusInfo.url).hostname
-      return `${acct}@${statusServer}`
+      return buildHandle(acct)
     })
     const statusCreatorHandle = `${statusInfo.account.username}@${statusServer}`
     setAccountHandles([statusCreatorHandle, ...rebloggedByHandles])
-    console.log(rebloggedByHandles)
-  }, [rebloggedByUsers, statusInfo, statusServer])
+  }, [rebloggedByUsers, statusInfo, statusServer, buildHandle])
 
   // set metrics for approximate crawling duration
   useEffect(() => {
@@ -83,6 +93,7 @@ function useStatusInfo() {
     totalFollowing,
     totalFollowers,
     accountHandles,
+    buildHandle,
   }
 }
 

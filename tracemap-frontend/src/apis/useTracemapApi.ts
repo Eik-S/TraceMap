@@ -1,4 +1,4 @@
-import { Relations } from 'tracemap-api-types'
+import { CrawlStatus, Relations } from 'tracemap-api-types'
 import { apiUrl } from '../utils/config'
 
 export function useTracemapApi() {
@@ -35,9 +35,23 @@ export function useTracemapApi() {
     return await response.json()
   }
 
+  async function getCrawlStatus(handles: string[]): Promise<CrawlStatus> {
+    const requestHeaders = new Headers()
+    requestHeaders.append('Content-Type', 'application/json')
+
+    const response = await fetch(`${apiUrl}/tracemap/get-crawl-status`, {
+      headers: requestHeaders,
+      method: 'POST',
+      body: JSON.stringify({ handles }),
+    })
+
+    return await response.json()
+  }
+
   return {
     isUsable,
     sendCrawlRequest,
     requestUserRelations,
+    getCrawlStatus,
   }
 }

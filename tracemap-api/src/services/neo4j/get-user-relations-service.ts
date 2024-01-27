@@ -1,8 +1,8 @@
-import { Relations } from 'tracemap-api-types'
+import { CrawlStatus, Relations } from 'tracemap-api-types'
 import { db } from './driver'
 
 export async function getUserRelations(handles: string[]): Promise<Relations> {
-  const { records, keys } = await db.executeQuery(
+  const { records } = await db.executeQuery(
     `
     UNWIND $handles as acct
       MATCH (u:User {acct:acct})
@@ -17,5 +17,23 @@ export async function getUserRelations(handles: string[]): Promise<Relations> {
   return {
     followingRelations: records[0].get('followingRelations'),
     handlesInDatabase: records[0].get('foundHandles'),
+  }
+}
+
+export async function getNumOfCrawledUsersAndRelations(handles: string[]): Promise<CrawlStatus> {
+  const oneDayInMillis = 1000 * 60 * 60 * 24
+  const oneDayAgo = Date.now() - oneDayInMillis
+  const { records } = await db.executeQuery(
+    `
+    UNWIND $handles as acct
+      MATCH (u:User {acct:acct})
+      WHERE (u.crawled_at > $oneDayAgo)
+    RETURN COLLECT(u.acct) AS handlesCrawled
+    `,
+    { handles, oneDayAgo },
+  )
+
+  return {
+    handlesCrawled: records[0].get('handlesCrawled'),
   }
 }

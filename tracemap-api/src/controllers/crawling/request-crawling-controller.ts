@@ -1,11 +1,11 @@
 import { Context } from 'koa'
 import { crawlerDevServerUri, isLocalDevelopment } from '../../utils/config'
-import { getAccessTokenHeader, getFullySpecifiedUserHandles } from '../../utils/request-params'
+import { getAccessTokenHeader, getHandlesFromRequestBody } from '../../utils/request-params'
 import axios, { AxiosError } from 'axios'
 
 export async function requestCrawlingController(ctx: Context) {
   const accessToken = getAccessTokenHeader(ctx)
-  const handles = getFullySpecifiedUserHandles(ctx)
+  const handles = getHandlesFromRequestBody(ctx)
 
   if (handles.length === 0) {
     ctx.status = 400
