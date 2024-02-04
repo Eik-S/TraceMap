@@ -12,6 +12,7 @@ function useStatusInfo() {
   const [totalFollowing, setTotalFollowing] = useState(0)
   const [totalFollowers, setTotalFollowers] = useState(0)
   const [accountHandles, setAccountHandles] = useState<string[] | undefined>(undefined)
+  const [creatorHandle, setCreatorHandle] = useState<string | undefined>(undefined)
 
   const { data: rebloggedByUsers } = useQuery({
     queryKey: ['statusRebloggedBy', statusID],
@@ -62,6 +63,7 @@ function useStatusInfo() {
       return buildHandle(acct)
     })
     const statusCreatorHandle = `${statusInfo.account.username}@${statusServer}`
+    setCreatorHandle(statusCreatorHandle)
     setAccountHandles([statusCreatorHandle, ...rebloggedByHandles])
   }, [rebloggedByUsers, statusInfo, statusServer, buildHandle])
 
@@ -86,6 +88,23 @@ function useStatusInfo() {
     setTotalFollowing(rebloggersFollowing + sourceFollowing)
   }, [rebloggedByUsers, statusInfo])
 
+  function getPercentageCrawled(crawledHandles: string[]): number {
+    if (typeof accountHandles === 'undefined' || typeof rebloggedByUsers === 'undefined') {
+      return 0
+    }
+
+    if (crawledHandles.length === accountHandles.length) {
+      return 100
+    }
+
+    const followeesCrawled = rebloggedByUsers
+      .filter((user) => crawledHandles.includes(buildHandle(user.acct)))
+      .map((user) => user.following_count)
+      .reduce((prev, curr) => prev + curr, 0)
+
+    return (followeesCrawled / totalFollowing) * 100
+  }
+
   return {
     statusInfo,
     statusServer,
@@ -93,7 +112,9 @@ function useStatusInfo() {
     totalFollowing,
     totalFollowers,
     accountHandles,
+    creatorHandle,
     buildHandle,
+    getPercentageCrawled,
   }
 }
 

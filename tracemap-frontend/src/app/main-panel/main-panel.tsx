@@ -1,4 +1,5 @@
 import { css } from '@emotion/react'
+import { useEffect, useState } from 'react'
 import { useTracemapApi } from '../../apis/useTracemapApi'
 import { useStatusInfoContext } from '../../contexts/status-info-context'
 import { mainButton } from '../../styles/buttons'
@@ -9,14 +10,17 @@ import {
   lightPurple,
 } from '../../styles/colors'
 import { isDev } from '../../utils/config'
-import { useEffect, useState } from 'react'
+import { Relations } from 'tracemap-api-types'
+import { TracemapGraph } from './tracemap/tracemap-graph'
 
 export function MainPanel({ ...props }) {
-  const { totalFollowers, totalFollowing, accountHandles, rebloggedByUsers, buildHandle } =
+  const { totalFollowers, totalFollowing, accountHandles, getPercentageCrawled } =
     useStatusInfoContext()
   const { sendCrawlRequest, requestUserRelations, getCrawlStatus } = useTracemapApi()
   const [isCrawling, setIsCrawling] = useState(false)
   const [percentageCrawled, setPercentageCrawled] = useState(0)
+  const [graphData, setGraphData] = useState<Relations | undefined>(undefined)
+
   // Calculated by default rate limits of mastodon API:
   //    80 followers/followees per request, 300 request per 5 minutes
   const apiRequestsFollowers = Math.ceil(totalFollowers / 80)
@@ -27,39 +31,62 @@ export function MainPanel({ ...props }) {
   const tracemapApiDisabled = typeof accountHandles === 'undefined' || isDev === false
 
   useEffect(() => {
+    async function setCrawlingState() {
+      if (typeof accountHandles === 'undefined' || isCrawling) {
+        return
+      }
+
+      const { handlesCrawled } = await getCrawlStatus(accountHandles)
+      const percentage = getPercentageCrawled(handlesCrawled)
+      console.log({ handlesCrawled, percentage })
+      setPercentageCrawled(percentage)
+    }
+
+    setCrawlingState()
+  }, [accountHandles, getCrawlStatus, getPercentageCrawled, isCrawling, percentageCrawled])
+
+  useEffect(() => {
+    async function loadGraphData() {
+      if (
+        tracemapApiDisabled ||
+        typeof accountHandles === 'undefined' ||
+        typeof graphData !== 'undefined'
+      ) {
+        return
+      }
+
+      if (percentageCrawled < 100) {
+        return
+      }
+
+      const relations = await requestUserRelations(accountHandles)
+      console.log(relations)
+      setGraphData(relations)
+    }
+
+    loadGraphData()
+  }, [accountHandles, requestUserRelations, tracemapApiDisabled, percentageCrawled, graphData])
+
+  useEffect(() => {
     if (tracemapApiDisabled || isCrawling === false) {
       return
     }
 
     const crawlingStatusInterval = setInterval(async (): Promise<void> => {
-      const crawlStatus = await getCrawlStatus(accountHandles)
+      const { handlesCrawled } = await getCrawlStatus(accountHandles)
+      const percentageCrawled = getPercentageCrawled(handlesCrawled)
+      setPercentageCrawled(percentageCrawled)
 
-      if (crawlStatus.handlesCrawled.length === accountHandles.length) {
-        setPercentageCrawled(100)
+      if (percentageCrawled === 100) {
         setIsCrawling(false)
         clearInterval(crawlingStatusInterval)
       }
-
-      const followeesCrawled = rebloggedByUsers
-        .filter((user) => crawlStatus.handlesCrawled.includes(buildHandle(user.acct)))
-        .map((user) => user.following_count)
-        .reduce((prev, curr) => prev + curr)
-
-      setPercentageCrawled((followeesCrawled / totalFollowing) * 100)
     }, 2000)
 
     return () => {
       clearInterval(crawlingStatusInterval)
     }
-  }, [
-    accountHandles,
-    buildHandle,
-    getCrawlStatus,
-    isCrawling,
-    rebloggedByUsers,
-    totalFollowing,
-    tracemapApiDisabled,
-  ])
+  }, [accountHandles, isCrawling, tracemapApiDisabled, getCrawlStatus, getPercentageCrawled])
 
   async function requestTracemapCrawling() {
     if (tracemapApiDisabled) {
@@ -70,13 +97,8 @@ export function MainPanel({ ...props }) {
     setIsCrawling(true)
   }
 
-  async function getUserRelations() {
-    if (tracemapApiDisabled) {
-      return
-    }
-
-    const relations = await requestUserRelations(accountHandles)
-    console.log(relations)
+  if (typeof graphData !== 'undefined') {
+    return <TracemapGraph inputData={graphData} {...props} />
   }
 
   return (
@@ -110,12 +132,9 @@ export function MainPanel({ ...props }) {
       <button
         css={styles.generateTracemapButton(isCrawling, percentageCrawled)}
         onClick={() => requestTracemapCrawling()}
-        disabled={tracemapApiDisabled || isCrawling}
+        disabled={tracemapApiDisabled || isCrawling || percentageCrawled === 100}
       >
         <span>{isCrawling ? 'generating...' : 'generate TraceMap'}</span>
-      </button>
-      <button css={mainButton} onClick={() => getUserRelations()} disabled={tracemapApiDisabled}>
-        get TraceMap data
       </button>
     </div>
   )
@@ -162,15 +181,29 @@ const styles = {
     ${mainButton}
     background-color: transparent;
 
+    background-image: linear-gradient(
+      to right,
+      ${darkPurple} ${percentageCrawled}%,
+      transparent ${percentageCrawled}%
+    );
+
     &:hover {
+      background-image: linear-gradient(
+        to right,
+        ${lightPurple} ${percentageCrawled}%,
+        transparent ${percentageCrawled}%
+      );
+    }
+
+    &:disabled:hover {
       background-image: none;
-      background-color: ${lightPurple};
+      cursor: default;
     }
 
     ${isCrawling === true &&
     css`
       &:disabled {
-        border-color: white;
+        border-color: #989898;
         background-image: linear-gradient(
           to right,
           ${darkPurple} ${percentageCrawled}%,

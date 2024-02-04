@@ -3,8 +3,9 @@ import { isDev } from './config'
 import { CrawlResult, ErrorResult, crawlUserData } from './crawler/crawler'
 import { validateSQSRecords } from './sqs-record-validation'
 import { makeMillisHumanReadable } from '../utils/format-time'
+import { Measure } from '../utils/measure'
 
-export async function handler(event: SQSEvent) {
+export async function handler(event: SQSEvent): Promise<void> {
   const { validRecords, invalidRecords } = validateSQSRecords(event.Records)
 
   if (isDev) {
@@ -14,6 +15,7 @@ export async function handler(event: SQSEvent) {
   for (const record of validRecords) {
     const crawlResults: CrawlResult[] = []
     const errorResults: ErrorResult[] = []
+    const totalTimeMeasure = new Measure()
     for (const acct of record.handles) {
       const result = await crawlUserData({ accessToken: record.accessToken, acct })
 
@@ -30,6 +32,11 @@ export async function handler(event: SQSEvent) {
         errorResults.push(result)
       }
     }
-    console.log(`#### successfully crawled ${record.handles.length} users`)
+    const totalMillis = totalTimeMeasure.stop()
+    console.log(
+      `#### successfully crawled ${record.handles.length} users in ${makeMillisHumanReadable(
+        totalMillis,
+      )}`,
+    )
   }
 }
