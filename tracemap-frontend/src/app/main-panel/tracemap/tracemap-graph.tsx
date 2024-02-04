@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import * as d3 from 'd3'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Relations } from 'tracemap-api-types'
 import { useStatusInfoContext } from '../../../contexts/status-info-context'
 import { createLinkList, getConnectionCount } from './graph-utilities'
@@ -41,9 +41,6 @@ interface RenderedLink {
 }
 
 export function TracemapGraph({ inputData, ...props }: TracemapGraphProps) {
-  const [scale] = useState(1)
-  const [shiftX] = useState(0)
-  const [shiftY] = useState(0)
   const { creatorHandle } = useStatusInfoContext()
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -72,7 +69,6 @@ export function TracemapGraph({ inputData, ...props }: TracemapGraphProps) {
       canvas.width = width
       canvas.height = height
 
-      // get drawing context and move to its center
       ctx.imageSmoothingEnabled = true
       ctx.translate(0.5, 0.5)
 
@@ -140,35 +136,37 @@ export function TracemapGraph({ inputData, ...props }: TracemapGraphProps) {
     }
 
     function render() {
-      const node = nodes[1]
-      const link = links[1]
-      console.log({ x: node.x, y: node.y, node })
-      console.log({ link })
+      const scale = getScale()
+      const shiftX = getShiftX()
+      const shiftY = getShiftY()
 
       nodes.forEach((node) => {
-        node.cx = getCanvasXPosition(node.x)
-        node.cy = getCanvasYPosition(node.y)
+        node.cx = getCanvasXPosition(node.x, scale, shiftX)
+        node.cy = getCanvasYPosition(node.y, scale, shiftY)
       })
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      links.forEach((link) => drawLink(link as unknown as RenderedLink))
-      nodes.forEach(drawNode)
+      links.forEach((link) => drawLink(link as unknown as RenderedLink, scale))
+      nodes.forEach((node) => {
+        node.handle === creatorHandle ? drawAuthor(node, scale) : drawNode(node, scale)
+      })
     }
 
-    function getCanvasXPosition(x: number): number {
+    function getCanvasXPosition(x: number, scale: number, shiftX: number): number {
       return (x + shiftX) * scale + canvas.width / 2
     }
 
-    function getCanvasYPosition(y: number): number {
+    function getCanvasYPosition(y: number, scale: number, shiftY: number): number {
       return (y + shiftY) * scale + canvas.height / 2
     }
 
-    function drawLink(link: RenderedLink) {
+    function drawLink(link: RenderedLink, scale: number) {
       const targetRadius = link.target.radius * scale
       const angle = Math.atan2(link.target.cy - link.source.cy, link.target.cx - link.source.cx)
       const xPos = link.target.cx - targetRadius * Math.cos(angle)
       const yPos = link.target.cy - targetRadius * Math.sin(angle)
+
       ctx.beginPath()
       ctx.moveTo(link.source.cx, link.source.cy)
       ctx.lineTo(xPos, yPos)
@@ -177,11 +175,11 @@ export function TracemapGraph({ inputData, ...props }: TracemapGraphProps) {
       ctx.stroke()
     }
 
-    function drawNode(node: Node) {
+    function drawNode(node: Node, scale: number) {
       const lineWidth = 2 * scale
       const radius = node.radius * scale - lineWidth
+
       ctx.beginPath()
-      ctx.moveTo(node.cx + radius, node.cy)
       ctx.arc(node.cx, node.cy, radius, 0, 2 * Math.PI)
       ctx.lineWidth = lineWidth
       ctx.fillStyle = 'rgba(' + colors[node.color] + ',' + node.opacity + ')'
@@ -190,8 +188,92 @@ export function TracemapGraph({ inputData, ...props }: TracemapGraphProps) {
       ctx.stroke()
     }
 
+    function drawAuthor(node: Node, scale: number) {
+      const lineWidth = 2 * scale
+      const radius = node.radius * scale - lineWidth
+      const innerRadius = radius * 0.44
+
+      ctx.beginPath()
+      ctx.arc(node.cx, node.cy, radius, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(' + colors[1] + ',' + node.opacity + ')'
+      ctx.fill()
+      ctx.lineWidth = lineWidth
+      ctx.strokeStyle = '#F5F6F7'
+      ctx.stroke()
+
+      ctx.beginPath()
+      ctx.arc(node.cx, node.cy, innerRadius, 0, Math.PI * 2)
+      ctx.fillStyle = '#fff'
+      ctx.fill()
+    }
+
+    function getShiftX(): number {
+      const sortByX = nodes
+        .map((node) => {
+          const nodeX = node.fx || node.x
+          if (nodeX < 0) {
+            return nodeX - node.radius
+          }
+          return nodeX + node.radius
+        })
+        .sort((a, b) => a - b)
+      const xMin = sortByX[0]
+      const xMax = sortByX[sortByX.length - 1]
+      const shiftX = -((xMin + xMax) / 2)
+      return shiftX
+    }
+
+    function getShiftY(): number {
+      const sortByY = nodes
+        .map((node) => {
+          const nodeY = node.fy || node.y
+          if (nodeY < 0) {
+            return nodeY - node.radius
+          }
+          return nodeY + node.radius
+        })
+        .sort((a, b) => a - b)
+      const yMin = sortByY[0]
+      const yMax = sortByY[sortByY.length - 1]
+      const shiftY = -((yMin + yMax) / 2)
+      return shiftY
+    }
+
+    function getScale(): number {
+      const xSpace = canvas.width
+      const ySpace = canvas.height
+      const sortByX = nodes
+        .map((node) => {
+          const nodeX = node.fx || node.x
+          if (nodeX < 0) {
+            return nodeX - node.radius
+          }
+          return nodeX + node.radius
+        })
+        .sort((a, b) => a - b)
+      const sortByY = nodes
+        .map((node) => {
+          const nodeY = node.fy || node.y
+          if (nodeY < 0) {
+            return nodeY - node.radius
+          }
+          return nodeY + node.radius
+        })
+        .sort((a, b) => a - b)
+      const xMin = sortByX[0]
+      const xMax = sortByX[sortByX.length - 1]
+      const yMin = sortByY[0]
+      const yMax = sortByY[sortByY.length - 1]
+      const x = xMax - xMin
+      const y = yMax - yMin
+      const xFactor = xSpace / x
+      const yFactor = ySpace / y
+      const factor = Math.min(xFactor, yFactor)
+      return Math.min(factor, 1)
+    }
+
     initGraph()
-  }, [creatorHandle, inputData, scale, shiftX, shiftY])
+  }, [creatorHandle, inputData])
 
   function resizeCanvas() {}
   return <canvas css={styles.graph} ref={canvasRef} onResize={() => resizeCanvas()} {...props} />
@@ -201,5 +283,6 @@ const styles = {
   graph: css`
     width: 100%;
     height: 100%;
+    padding: 20px;
   `,
 }
