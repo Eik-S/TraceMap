@@ -173,6 +173,23 @@ export function TracemapGraph({ inputData, ...props }: TracemapGraphProps) {
       ctx.strokeStyle = 'rgba(' + linkColors[link.color] + ',' + link.opacity + ')'
       ctx.lineWidth = 0.8 * dpr
       ctx.stroke()
+      drawHead(link, xPos, yPos, angle)
+    }
+
+    function drawHead(link: RenderedLink, xPos: number, yPos: number, angle: number) {
+      ctx.beginPath()
+      ctx.moveTo(xPos, yPos)
+      const headlen = 4 * dpr
+      const headRightX = xPos - headlen * Math.cos(angle - Math.PI / 6)
+      const headRightY = yPos - headlen * Math.sin(angle - Math.PI / 6)
+      ctx.lineTo(headRightX, headRightY)
+      ctx.moveTo(xPos, yPos)
+      const headLeftX = xPos - headlen * Math.cos(angle + Math.PI / 6)
+      const headLeftY = yPos - headlen * Math.sin(angle + Math.PI / 6)
+      ctx.lineTo(headLeftX, headLeftY)
+      ctx.strokeStyle = 'rgba(' + linkColors[1] + ',' + link.opacity + ')'
+      ctx.lineWidth = 1 * dpr
+      ctx.stroke()
     }
 
     function drawNode(node: Node, scale: number) {
