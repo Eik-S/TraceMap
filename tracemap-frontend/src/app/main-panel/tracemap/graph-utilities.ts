@@ -1,5 +1,5 @@
 import { Relations } from 'tracemap-api-types'
-import { Link } from './tracemap-graph'
+import { Link } from './use-tracemap-rendering'
 
 export function getConnectionCount(
   handle: string,
