@@ -5,7 +5,7 @@
     "removeComments": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitThis": true,

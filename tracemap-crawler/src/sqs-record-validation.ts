@@ -1,5 +1,4 @@
 import { SQSRecord } from 'aws-lambda'
-import { CrawlUserDataProps } from './crawler/crawler'
 
 export interface CrawlRequest {
   handles: string[]

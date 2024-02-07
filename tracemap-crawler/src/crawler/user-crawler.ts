@@ -1,12 +1,7 @@
-import { AxiosError } from 'axios'
-import { makeMillisHumanReadable } from '../../utils/format-time'
 import { Measure } from '../../utils/measure'
 import { requestFollowing } from '../mastodon-api/request-following'
 import { lookupUserID } from '../mastodon-api/user-lookup'
-import { deleteFolloweesOfUser, writeFolloweesOfUser } from '../neo4j-api/followees'
-import { getLastCrawledTimestampOfUser } from '../neo4j-api/user-info'
-
-const oneDayInMillis = 1000 * 60 * 60 * 24
+import { deleteFolloweesOfUser, writeFolloweesOfUser } from '../neo4j-api/write-followees'
 
 export interface CrawlUserDataProps {
   acct: string
@@ -16,7 +11,6 @@ export interface CrawlResult {
   type: 'crawlResult'
   mastodonRequestMillis: number
   neo4jWriteMillis: number
-  skipped: boolean
 }
 export interface ErrorResult {
   type: 'errorResult'
@@ -35,20 +29,6 @@ export async function crawlUserData(
   try {
     const { acct: sourceAcct, accessToken } = requestData
 
-    // check if new crawl is necessary
-    const lastCrawlTimestamp = await getLastCrawledTimestampOfUser(sourceAcct)
-    const millisSinceLastCrawl = Date.now() - (lastCrawlTimestamp || oneDayInMillis)
-    if (millisSinceLastCrawl < oneDayInMillis) {
-      const age = makeMillisHumanReadable(millisSinceLastCrawl)
-      console.log(`${sourceAcct} up to date, last crawled ${age} ago`)
-
-      return {
-        type: 'crawlResult',
-        skipped: true,
-        mastodonRequestMillis: 0,
-        neo4jWriteMillis: 0,
-      }
-    }
     const followees: string[] = []
 
     const mastodonMeasure = new Measure()
@@ -74,6 +54,8 @@ export async function crawlUserData(
     const mastodonRequestTime = mastodonMeasure.stop()
 
     // update neo4j relations
+    // TODO: if deadlocks are received from neo4j when scaling to multiple
+    // lambdas, sqs can be used as a buffer with an own lambda in front of neo4j
     const neo4jWriteMeasure = new Measure()
     const { relationshipsDeleted } = await deleteFolloweesOfUser(sourceAcct)
     console.log(`${relationshipsDeleted} follows relationships deleted from ${sourceAcct}`)
@@ -85,7 +67,6 @@ export async function crawlUserData(
 
     return {
       type: 'crawlResult',
-      skipped: false,
       mastodonRequestMillis: mastodonRequestTime,
       neo4jWriteMillis: neo4jWriteTime,
     }

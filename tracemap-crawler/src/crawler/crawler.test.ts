@@ -1,7 +1,7 @@
 import { mockFn } from '../../utils/mock-fn'
 import { requestFollowingResponseMock } from '../mastodon-api/mock-data/request-following-mocks'
 import { crawlRequestDataMock } from './mock-data/crawl-request-data-mock'
-import { getUserFollowees } from './crawler'
+import { getUserFollowees } from './user-crawler'
 import { requestFollowing } from '../mastodon-api/request-following'
 
 jest.mock('../mastodon-api/request-following')

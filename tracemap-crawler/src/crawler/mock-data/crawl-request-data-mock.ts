@@ -1,4 +1,4 @@
-import { GetUserFolloweesProps } from '../crawler'
+import { GetUserFolloweesProps } from '../user-crawler'
 
 export const crawlRequestDataMock: GetUserFolloweesProps = {
   accessToken: 'foobar',

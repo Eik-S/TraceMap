@@ -22,6 +22,7 @@ export async function writeFolloweesOfUser(
 ): Promise<ReturnType<QueryStatistics['updates']>> {
   const { summary } = await db.executeQuery(
     `MERGE (sourceUser:User {acct: $sourceAcct})
+    REMOVE sourceUser.queued_at
     SET sourceUser.crawled_at = timestamp()
     WITH $followeeAccts as followees, sourceUser
     UNWIND followees as followeeAcct

@@ -1,4 +1,7 @@
+import * as d3 from 'd3'
 import { useCallback } from 'react'
+import { Relations } from 'tracemap-api-types'
+import { createLinkList, getConnectionCount, removeDuplicateStrings } from './graph-utilities'
 import {
   getCanvasXPosition,
   getCanvasYPosition,
@@ -6,9 +9,6 @@ import {
   getOriginalYPosition,
   updatePositioning,
 } from './use-tracemap-positions'
-import { Relations } from 'tracemap-api-types'
-import { createLinkList, getConnectionCount } from './graph-utilities'
-import * as d3 from 'd3'
 
 const colors = ['110,113,122', '127,37,230', '76,80,89']
 const linkColors = ['204,208,217', '142,146,153']
@@ -65,6 +65,7 @@ export function useTracemapRendering({
     const creator = creatorHandle!
     const canvas = canvasElem!
 
+    console.log({ creator, inputData })
     const dpr = devicePixelRatio || 1
     const ctx = canvas.getContext('2d')!
 
@@ -94,7 +95,7 @@ export function useTracemapRendering({
         }),
       )
 
-      inputData.handlesInDatabase.forEach((handle) => {
+      inputData.handlesInDatabase.filter(removeDuplicateStrings).forEach((handle) => {
         const { inDegree, outDegree } = getConnectionCount(handle, links)
         nodes.push({
           handle,
@@ -174,7 +175,6 @@ export function useTracemapRendering({
     }
 
     function render() {
-      console.log('render cicle')
       const scale = updatePositioning(nodes, canvas.width, canvas.height)
       nodes.forEach((node) => {
         node.cx = getCanvasXPosition(node.x)

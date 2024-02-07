@@ -32,3 +32,15 @@ export function createLinkList(
 
   return linkList
 }
+
+export const removeDuplicateStrings = (() => {
+  const matches: string[] = []
+
+  return function (handle: string): boolean {
+    if (matches.includes(handle)) {
+      return false
+    }
+    matches.push(handle)
+    return true
+  }
+})()
