@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios'
-import { oauthRedirectUri } from '../../utils/config'
+import { isLocalDevelopment, oauthRedirectUri } from '../../utils/config'
 import { MastoErrorResponse, isErrorResponse } from './client-id'
 import { getAppCredentialsFromDynamo } from '../dynamo/dynamo-app-credentials'
+import { getLocalAppCredentials } from '../dynamo/dynamo-local-mocks'
 
 /**
  *
@@ -10,7 +11,9 @@ import { getAppCredentialsFromDynamo } from '../dynamo/dynamo-app-credentials'
  * @returns the users access_token for future mastodon api requests
  */
 export async function getAccessToken(server: string, code: string): Promise<string | undefined> {
-  const credentials = await getAppCredentialsFromDynamo(server)
+  const credentials = isLocalDevelopment
+    ? getLocalAppCredentials()
+    : await getAppCredentialsFromDynamo(server)
 
   if (typeof credentials === 'undefined') {
     throw new Error(`no app credentials found for server ${server}`)

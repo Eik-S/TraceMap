@@ -20,11 +20,11 @@ export async function getOutdatedUserHandles(
     `
     UNWIND $handles as acct
       MERGE (u:User {acct:acct})
-      ON CREATE
-        SET u.crawled_at = 0
-      WITH u as oldy WHERE u.crawled_at < $outdatedFrom
-      SET oldy.queued_at = timestamp()
-      RETURN collect(oldy.acct) as outdatedHandles
+      WITH u as user, u as uncrawledUser WHERE u.crawled_at IS NULL
+      SET uncrawledUser.crawled_at = 0
+      WITH user as outdatedUser WHERE user.crawled_at < $outdatedFrom
+      SET outdatedUser.queued_at = timestamp()
+      RETURN collect(outdatedUser.acct) as outdatedHandles
   `,
     {
       handles,

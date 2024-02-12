@@ -3,15 +3,21 @@ import {
   getAppCredentialsFromDynamo,
   saveAppCredentialsToDynamo,
 } from '../dynamo/dynamo-app-credentials'
+import { isLocalDevelopment } from '../../utils/config'
+import { getLocalAppCredentials, saveLocalAppCredentials } from '../dynamo/dynamo-local-mocks'
 
 export async function getClientId(server: string, forceUpdate = false): Promise<string> {
-  const storedCredentials = await getAppCredentialsFromDynamo(server)
+  const storedCredentials = isLocalDevelopment
+    ? getLocalAppCredentials()
+    : await getAppCredentialsFromDynamo(server)
 
   if (typeof storedCredentials === 'undefined' || forceUpdate === true) {
     console.log(`creating new app credentials for ${server}`)
     const newCredentials = await createAppCredentials(server)
 
-    void (await saveAppCredentialsToDynamo(server, newCredentials))
+    isLocalDevelopment
+      ? saveLocalAppCredentials(newCredentials)
+      : void (await saveAppCredentialsToDynamo(server, newCredentials))
 
     return newCredentials.client_id
   }

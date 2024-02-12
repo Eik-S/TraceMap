@@ -21,6 +21,7 @@ export function Timeline({ content, loading, ...props }: TimelineProps) {
 
 const styles = {
   timelineWrapper: css`
+    width: 100%;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
