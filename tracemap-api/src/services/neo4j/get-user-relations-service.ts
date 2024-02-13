@@ -14,13 +14,20 @@ export async function getUserRelations(handles: string[]): Promise<Relations> {
     { handles },
   )
 
+  if (records.length === 0) {
+    return {
+      followingRelations: [],
+      handlesInDatabase: [],
+    }
+  }
+
   return {
     followingRelations: records[0].get('followingRelations'),
     handlesInDatabase: records[0].get('foundHandles'),
   }
 }
 
-export async function getNumOfCrawledUsersAndRelations(handles: string[]): Promise<CrawlStatus> {
+export async function getCrawledHandles(handles: string[]): Promise<CrawlStatus> {
   const oneDayInMillis = 1000 * 60 * 60 * 24
   const oneDayAgo = Date.now() - oneDayInMillis
   const { records } = await db.executeQuery(

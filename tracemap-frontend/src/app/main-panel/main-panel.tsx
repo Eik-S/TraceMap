@@ -11,7 +11,7 @@ import {
 } from '../../styles/colors'
 import { isDev } from '../../utils/config'
 import { Relations } from 'tracemap-api-types'
-import { TracemapGraph } from './tracemap/tracemap-graph'
+import { TracemapGraph } from './graph/tracemap-graph'
 
 export function MainPanel({ ...props }) {
   const { totalFollowers, totalFollowing, accountHandles, getPercentageCrawled } =
@@ -38,7 +38,6 @@ export function MainPanel({ ...props }) {
 
       const { handlesCrawled } = await getCrawlStatus(accountHandles)
       const percentage = getPercentageCrawled(handlesCrawled)
-      console.log({ handlesCrawled, percentage })
       setPercentageCrawled(percentage)
     }
 
@@ -60,7 +59,6 @@ export function MainPanel({ ...props }) {
       }
 
       const relations = await requestUserRelations(accountHandles)
-      console.log(relations)
       setGraphData(relations)
     }
 
