@@ -26,5 +26,4 @@ This makes it possible to stay logged in after restarting the koa server.
 ### Infrastructure
 
 The infrastructure of TraceMap is hosted on AWS.
-
-![architecture diagram](./_infrastructure/docs/tracemap-architecture-v1.pdf.png)
+![architecture diagram](./_infrastructure/docs/tracemap-architecture-v1.png)
