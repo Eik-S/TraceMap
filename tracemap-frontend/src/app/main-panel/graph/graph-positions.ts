@@ -73,12 +73,15 @@ export function updatePositioning(
   nodes: D3Node[],
   canvasWidth: number,
   canvasHeight: number,
+  dragging: boolean,
 ): number {
   width = canvasWidth
   height = canvasHeight
   scale = calculateScale(nodes, canvasWidth, canvasHeight)
-  shiftX = calculateShiftX(nodes)
-  shiftY = calculateShiftY(nodes)
+  if (dragging === false) {
+    shiftX = calculateShiftX(nodes)
+    shiftY = calculateShiftY(nodes)
+  }
 
   return scale
 }

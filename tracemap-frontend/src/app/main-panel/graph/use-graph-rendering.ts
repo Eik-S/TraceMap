@@ -71,6 +71,8 @@ export function useGraphRendering({
     const ctx = canvas.getContext('2d')!
     const { drawAuthor, drawLink, drawNode } = initGraphDrawing({ ctx, dpr })
 
+    let dragging = false
+
     const links: Link[] = createLinkList(inputData, creator).map((link) => ({
       source: link[0],
       target: link[1],
@@ -116,13 +118,44 @@ export function useGraphRendering({
 
       d3.select(canvas).call(
         d3
-          .drag<HTMLCanvasElement, unknown>()
+          .drag<HTMLCanvasElement, any>()
           .container(canvas)
           .subject((event) => getHoveredNode(event, simulation))
-          .on('start', () => null)
-          .on('drag', () => null)
-          .on('end', () => null),
+          .on('start', (event) => dragNodeStart(event, simulation))
+          .on('drag', dragNodeDrag)
+          .on('end', (event) => dragNodeEnd(event, simulation)),
       )
+    }
+
+    function dragNodeStart(
+      event: d3.D3DragEvent<any, D3Node, D3Node>,
+      simulation: d3.Simulation<D3Node, D3Link>,
+    ) {
+      dragging = true
+      if (simulation.alpha < simulation.alphaMin) {
+        simulation.alphaTarget(0.3).restart()
+      }
+      const node = event.subject
+      node.fx = node.x
+      node.fy = node.y
+    }
+
+    function dragNodeDrag(event: d3.D3DragEvent<any, D3Node, D3Node>) {
+      const node = event.subject
+      console.log({ event })
+      node.fx = event.x
+      node.fy = event.y
+    }
+
+    function dragNodeEnd(
+      event: d3.D3DragEvent<any, D3Node, D3Node>,
+      simulation: d3.Simulation<D3Node, D3Link>,
+    ) {
+      dragging = false
+      simulation.alphaTarget(0)
+      const node = event.subject
+      node.fx = undefined
+      node.fy = undefined
     }
 
     function createSimulation(): d3.Simulation<D3Node, D3Link> {
@@ -158,11 +191,12 @@ export function useGraphRendering({
       event: DragEvent,
       simulation: d3.Simulation<D3Node, D3Link>,
     ): Node | undefined {
-      const x = getOriginalXPosition(event.x)
-      const y = getOriginalYPosition(event.y)
+      const x = getOriginalXPosition(event.x * dpr)
+      const y = getOriginalYPosition(event.y * dpr)
       const node = simulation.find(x, y)
       if (node) {
-        return simulation.find(x, y, node.radius * 1.2)
+        const nodeClicked = simulation.find(x, y, node.radius * 1.2)
+        return nodeClicked
       }
 
       return undefined
@@ -179,7 +213,7 @@ export function useGraphRendering({
     }
 
     function render() {
-      const scale = updatePositioning(nodes, canvas.width, canvas.height)
+      const scale = updatePositioning(nodes, canvas.width, canvas.height, dragging)
       nodes.forEach((node) => {
         node.cx = getCanvasXPosition(node.x)
         node.cy = getCanvasYPosition(node.y)
