@@ -11,7 +11,10 @@ TraceMap is a tool for for investigating information flow on mastodon.
 
 1. [download neo4j desktop](https://neo4j.com/download/)
 2. create a new database
-3. set the credentials: `user: neo4j` and `password: password123`
+3. change the initial password before starting the database for the first time
+    - [as described here](https://neo4j.com/docs/operations-manual/current/configuration/set-initial-password/)
+    - TLDR: open a terminal from the neo4j desktop app and enter:
+    ```$neo4j-home> bin/neo4j-admin dbms set-initial-password password123```
 
 ### Start TraceMap Locally
 
