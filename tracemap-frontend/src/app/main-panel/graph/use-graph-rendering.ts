@@ -9,7 +9,7 @@ import {
   getOriginalYPosition,
   updatePositioning,
 } from './graph-positions'
-import { createLinkList, getConnectionCount, removeDuplicateStrings } from './graph-utilities'
+import { createLinkList, getConnectionCount, removeDuplicates } from './graph-utilities'
 
 interface Node {
   opacity: number
@@ -80,25 +80,23 @@ export function useGraphRendering({
       color: 0,
     }))
 
-    const nodes: D3Node[] = inputData.handlesInDatabase
-      .filter(removeDuplicateStrings)
-      .map((handle) => {
-        const { inDegree, outDegree } = getConnectionCount(handle, links)
-        return {
-          handle,
-          inDegree,
-          outDegree,
-          radius: d3scale(outDegree) * 1.6 * dpr,
-          opacity: 1,
-          color: 0,
-          cx: 0,
-          cy: 0,
-          x: 0,
-          y: 0,
-          vx: 0,
-          vy: 0,
-        }
-      })
+    const nodes: D3Node[] = removeDuplicates(inputData.handlesInDatabase).map((handle) => {
+      const { inDegree, outDegree } = getConnectionCount(handle, links)
+      return {
+        handle,
+        inDegree,
+        outDegree,
+        radius: d3scale(outDegree) * 1.6 * dpr,
+        opacity: 1,
+        color: 0,
+        cx: 0,
+        cy: 0,
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+      }
+    })
 
     function initGraph() {
       console.log('initiating graph')
