@@ -12,7 +12,6 @@ import { WordCloud } from './word-cloud/word-cloud'
 export function UserView({ ...props }) {
   const { userInfo, userTimeline, fetchNextTimelinePage, isFetchingTimeline } = useUserInfo()
   const open = typeof userInfo !== 'undefined'
-  console.log('userView rerendered')
 
   function closeUserDetails() {
     window.history.back()

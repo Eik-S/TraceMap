@@ -18,9 +18,21 @@ export function createLinkList(
   data: Relations,
   creatorHandle: string,
 ): Relations['followingRelations'] {
-  const linkList: Relations['followingRelations'] = data.followingRelations
-    .filter(([source]) => source !== creatorHandle)
-    .map(([source, target]) => [target, source])
+  const sharingHandlesByTime = data.handlesInDatabase
+
+  const linkList: Relations['followingRelations'] = []
+
+  data.followingRelations.forEach(([source, target]) => {
+    const shareSource = target
+    const shareTarget = source
+
+    const shareSourceIndex = sharingHandlesByTime.indexOf(shareSource)
+    const shareTargetIndex = sharingHandlesByTime.indexOf(shareTarget)
+
+    if (shareSourceIndex < shareTargetIndex) {
+      linkList.push([shareSource, shareTarget])
+    }
+  })
 
   // add links from creator to loose nodes not following another node
   const handlesFollowingSomebody = new Set(data.followingRelations.map(([source]) => source))

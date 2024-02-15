@@ -34,7 +34,7 @@ export async function getRebloggedByUsers({
     batchResponses.push(nextBatch!)
   }
 
-  return batchResponses.flatMap((response) => response.data)
+  return batchResponses.flatMap((response) => response.data).reverse()
 }
 
 async function getBatchOfRebloggedByUsers(

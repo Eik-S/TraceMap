@@ -12,11 +12,15 @@ import {
 import { isDev } from '../../utils/config'
 import { Relations } from 'tracemap-api-types'
 import { TracemapGraph } from './graph/tracemap-graph'
+import { useGraphStatusContext } from '../../contexts/graph-status-context'
 
 export function MainPanel({ ...props }) {
   const { totalFollowers, totalFollowing, accountHandles, getPercentageCrawled } =
     useStatusInfoContext()
+  const { setGraphStatus } = useGraphStatusContext()
+
   const { sendCrawlRequest, requestUserRelations, getCrawlStatus } = useTracemapApi()
+
   const [isCrawling, setIsCrawling] = useState(false)
   const [percentageCrawled, setPercentageCrawled] = useState(0)
   const [graphData, setGraphData] = useState<Relations | undefined>(undefined)
@@ -57,13 +61,21 @@ export function MainPanel({ ...props }) {
       if (percentageCrawled < 100) {
         return
       }
-
+      setGraphStatus('generating')
       const relations = await requestUserRelations(accountHandles)
       setGraphData(relations)
+      setGraphStatus('ready')
     }
 
     loadGraphData()
-  }, [accountHandles, requestUserRelations, tracemapApiDisabled, percentageCrawled, graphData])
+  }, [
+    accountHandles,
+    requestUserRelations,
+    tracemapApiDisabled,
+    percentageCrawled,
+    graphData,
+    setGraphStatus,
+  ])
 
   useEffect(() => {
     if (tracemapApiDisabled || isCrawling === false) {

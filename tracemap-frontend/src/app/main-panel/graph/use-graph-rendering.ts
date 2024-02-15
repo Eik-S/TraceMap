@@ -140,7 +140,6 @@ export function useGraphRendering({
 
     function dragNodeDrag(event: d3.D3DragEvent<any, D3Node, D3Node>) {
       const node = event.subject
-      console.log({ event })
       node.fx = event.x
       node.fy = event.y
     }
@@ -157,8 +156,6 @@ export function useGraphRendering({
     }
 
     function createSimulation(): d3.Simulation<D3Node, D3Link> {
-      console.log({ nodes, inputData })
-
       const simulation = d3
         .forceSimulation<D3Node, D3Link>(nodes)
         .force(

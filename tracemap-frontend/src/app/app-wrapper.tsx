@@ -6,17 +6,20 @@ import { MainPanel } from './main-panel/main-panel'
 import { SidePanel } from './side-panel/side-panel'
 import { mediaQuery } from '../styles/utils'
 import { AppSettingsProvider } from '../contexts/app-settings-context'
+import { GraphStatusProvider } from '../contexts/graph-status-context'
 
 export function AppWrapper() {
   return (
     <div css={styles.wrapper}>
       <Header css={styles.header} />
-      <AppSettingsProvider>
-        <StatusInfoProvider>
-          <SidePanel css={styles.sidePanel} />
-          <MainPanel css={styles.mainPanel} />
-        </StatusInfoProvider>
-      </AppSettingsProvider>
+      <GraphStatusProvider>
+        <AppSettingsProvider>
+          <StatusInfoProvider>
+            <SidePanel css={styles.sidePanel} />
+            <MainPanel css={styles.mainPanel} />
+          </StatusInfoProvider>
+        </AppSettingsProvider>
+      </GraphStatusProvider>
     </div>
   )
 }
